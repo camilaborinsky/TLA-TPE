@@ -10,7 +10,8 @@ unsigned int current_scope;
 typedef struct node_t{
     struct node_t * next;
     unsigned long long prehash;
-    variable var;
+    variable * var;
+    unsigned int scope;
 }node_t;
 
 
@@ -37,8 +38,8 @@ unsigned long long hash(char * name)
     return prehash;
 }
 
-int insert(char * name, var_type type){
-    unsigned long long pre = hash(name);
+int insert(variable * var){
+    unsigned long long pre = hash(var->name);
     unsigned int key_index = pre%size;
     node_t * node = hash_table[key_index];
     
@@ -47,21 +48,18 @@ int insert(char * name, var_type type){
 
     if (node == NULL){
         node = (node_t *) malloc(sizeof(node_t));
-        strcpy(node->var.name, name);
-        node->var.type = type;
-        node->var.scope = current_scope;
+        node->var = var;
+        node->scope = current_scope;
         node->next = hash_table[key_index];
         hash_table[key_index] = node;
         size++;
     }else{
-        if(node->var.scope == current_scope){
-            printf("Multiple declaration of variable %s", name);
+        if(node->scope == current_scope){
+            printf("Multiple declaration of variable %s", var->name);
             return MULTIPLE_DECLARATION;       
         }else{
             node = (node_t *) malloc(sizeof(node_t));
-             strcpy(node->var.name, name);
-            node->var.type = type;
-            node->var.scope = current_scope;
+            node->scope = current_scope;
             size++;
 
         }
@@ -86,7 +84,7 @@ variable * lookup(char * name){
     unsigned int index = pre % size;
     node_t * node = hash_table[index];
     while(node != NULL && node->prehash == pre) node = node->next;
-    if(node->var.scope <= current_scope)
+    if(node->scope <= current_scope)
         return &node->var;
     else
         return NULL;
@@ -97,7 +95,7 @@ variable * lookup_in_scope(char * name, int scope){
     unsigned int index = pre % size;
     node_t * node = hash_table[index];
     while(node != NULL && node->prehash == pre) node = node->next;
-    if(node->var.scope <= scope)
+    if(node->scope <= scope)
         return &node->var;
     else
         return NULL;
@@ -114,7 +112,7 @@ void prev_scope(){
     for(int i = 0; i < size ; i++){
         if(hash_table[i] != NULL){
             node = hash_table[i];
-            while(node != NULL && node->var.scope == current_scope){
+            while(node != NULL && node->scope == current_scope){
                 node = node->next;
             }
             hash_table[i] = node; 

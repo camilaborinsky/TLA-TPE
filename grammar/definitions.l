@@ -8,19 +8,21 @@ integer -?[0-9]+
 float   {integer}(\.{integer}+)?
 comment \/\/.*
 name [a-zA-Z]+ 
-
+text "[^"]*"
 
 %%
 [\n\t ]			;
 
 {integer}       {yylval.integer=atoi(yytext); return VALUE;}
 {float}     	{yylval.decimal=strtof(yytext,0); return VALUE;}
+{text}     	    {yylval.string=strdup(yytext); return VALUE;}
 
 [ \t]+          ;
 
 {comment}       ;
 
 
+"I solemnly swear that I am up to no good"  {return BEGIN;}
 "int"           {yylval.type = tINT; return INT;}
 "double"        {yylval.type = tDOUBLE; return DOUBLE;}
 "bool"          {yylval.type = tBOOL; return BOOL;}
@@ -33,7 +35,7 @@ name [a-zA-Z]+
 "if"            {return IF;}
 "while"         {return WHILE;}
 "let"           {return LET;}
-
+"function"      {return FUNCTION;}
 
 "<="            {return LE;}
 ">="            {return GE;}
@@ -42,6 +44,7 @@ name [a-zA-Z]+
 "or"            {return OR;}
 "and"           {return AND;}
 "not"           {return NOT;}
+"mischief managed" {return RETURN;}
 
 "true"          {return TRUE;}
 "false"         {return FALSE;}

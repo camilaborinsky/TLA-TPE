@@ -8,7 +8,7 @@
 
 void init_table();
 unsigned long long hash(char * name);
-int insert(char * name, var_type type);
+int insert(variable* var);
 variable * lookup(char * name);
 variable * lookup_in_scope(char * name, int scope);
 void next_scope();
