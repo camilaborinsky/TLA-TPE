@@ -52,4 +52,8 @@ Mkfile.old
 dkms.conf
 
 demo
+parser
+y.tab.c
+y.tab.h
+lex.yy.c
 .vscode

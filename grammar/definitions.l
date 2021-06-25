@@ -6,7 +6,7 @@
 integer -?[0-9]+
 float   {integer}(\.{integer}+)?
 comment ;.*
-name [a-zA-Z]+
+/* name [a-zA-Z]+ */
 
 
 %%
@@ -14,8 +14,9 @@ name [a-zA-Z]+
 
 {integer}       {yylval=atoi(yytext); return VALUE;}
 {float}     	{yylval=strtod(yytext,0); return VALUE;}
-[ /t]+          ;
-{name}          {return ID;}
+
+[ \t]+          ;
+
 {comment}       ;
 
 "int"           {return INT;}
@@ -57,13 +58,3 @@ name [a-zA-Z]+
 "false"         {return FALSE;}
 .				printf("Unknown token!"); yyterminate();
 %%
-
-int yywrap(void){
-    return 1;
-}
-
-int main(int argc, char *argv[]){
-	printf ("Identifica cualquier notacion válida para números (incluyendo científca)");
-	yylex();
-	return 0;
-}
