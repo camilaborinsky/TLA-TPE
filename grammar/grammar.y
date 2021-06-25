@@ -1,69 +1,88 @@
 %{
+
 #include <stdio.h>
 #include <stdlib.h>
+#include "utils/symbol_table.h"
+
+int yylex();
+void yyerror();
+
 %}
-%token TRUE FALSE VALUE ID INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE IF WHILE LET ASSIGN L LE G GE EQ NE OR AND NOT ADD SUB MUL DIV LPARENTHESIS RPARENTHESIS LBRACE RBRACE TDOT SEP NUM
+
+%union{
+  char * string;
+  int integer;
+  float decimal;
+  int type;
+}
+
+%token<string> ID
+%token<decimal> NUM
+%token<type> INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE
+%token TRUE FALSE VALUE IF WHILE LET LE GE EQ NE OR AND NOT
 %right "="
 %left OR AND
 %left '>' '<' LE GE EQ NE
 %left '+' '-'
 %left '*' '/'
 %left '!'
+%start S
+
 
 
 %%
     
-S         : CODE {printf("Input accepted\n"); exit(0);}
+S         : CODE {printf("Input accepted"); exit(0);}
+            ;
+
 CODE      : CTL CODE
           | LOOP CODE
           | SMP CODE
+          | E ';'
           |
           ;
+
 SMP      : DECL
-          | E
-          ;
-DECL     : LET ID ':' T ;
+         ;
+
+DECL     : LET ID ':' T ';'  {printf("variable %s\n",$2);}
+         ;
 
 COND      : COND OR COND
           | COND AND COND
           | NOT COND
           | E
+          ;
 
-LOOP    : WHILE LPARENTHESIS COND RPARENTHESIS LBRACE CODE RBRACE {}
-CTL     : IF LPARENTHESIS COND RPARENTHESIS LBRACE CODE RBRACE {}
-        
-E         : ID ASSIGN E { $$ = $3;}
-          | E ADD E {$$ = $1 + $3;}
-          | E SUB E {$$ = $1 - $3;}
-          | E MUL E {$$ = $1 * $3;}
-          | E DIV E { if($3 == 0){
-                        yyerror("divide by zero");
-                      }else{$$ = $1 / $3;}}
-          | E L   E {$$ = $1 < $3;}
-          | E G   E 
+LOOP    : WHILE '(' COND ')' '{' CODE '}'
+          ;
+CTL     : IF '(' COND ')' '{' CODE '}'
+          ;
+
+   
+E         : 
+            ID '=' E 
+          | E '+' E //{$$ = $1 + $3;}
+          | E '-' E //{$$ = $1 - $3;}
+          | E '*' E //{$$ = $1 * $3;}
+          | E '/' E 
+          /* { if($3 == 0){ */
+                        /* yyerror("'/'ide by zero"); */
+                      /* }else{$$ = $1 / $3;}} */
+          | E '<'   E //{$$ = $1 < $3;}
+          | E '>'   E 
           | E LE  E
           | E GE  E
           | E EQ  E
           | E NE  E
           | E OR  E
           | E AND E
-          | ID  
-          | NUM
-          { $$ = $1; printf("Found %d\n", $1);   }
-          ;
-
-    
-E2     : E L E
-         | E G E
-         | E LE E
-         | E GE E
-         | E EQ E
-         | E NE E
-         | E OR E
-         | E AND E
-         ;    
+          | ID  {printf("ID=%s \n",$1);}
+          | NUM {  printf("Found %f\n", $1);   }
+          ;   
          
-T       : INT
+T         : 
+            INT 
           | DOUBLE
           | BOOL
           | RECTANGLE
@@ -74,12 +93,11 @@ T       : INT
           ;
 %%
 
-int yywrap()
-{
+int yywrap(){
         return 1;
 } 
 
-main() {
+int main() {
     printf("Enter the expression:\n");
     yyparse();
 } 
