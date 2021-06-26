@@ -27,9 +27,9 @@ void yyerror();
 %token<type> INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE
 %token TRUE FALSE IF WHILE FUNCTION LET LE GE EQ NE NOT BEGIN RETURN
 %token<integer> OR AND
-%token<value> VALUE
+%token<value> vTEXT vINT vDOUBLE vBOOL 
 %type <integer> OPERATOR
-%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM COND EXPRESSION
+%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM COND CONDITIONAL_OPERATOR EXPRESSION VALUE
 %type<rnode> S
 %type<type> T
 %parse-param {root_node_t * root}
@@ -89,7 +89,7 @@ PARAM_LIST : PARAM {$$ = $1;}
                 | {$$ = 0;}
                 ; 
 
-PARAM : ID { $$ = new_param_node($1);}
+PARAM : EXPRESSION { $$ = new_param_node($1);}
       | PARAM ',' PARAM {$$ = concat_lists($1,$3);}
 
 
@@ -106,7 +106,7 @@ CTL     : IF '(' COND ')' '{' CODE '}' {$$= new_if_node($3, $6);}
 COND      : COND OR COND {$$ = new_compose_cond_node($1,$2,$3); }
           | COND AND COND {$$ = new_compose_cond_node($1,$2,$3); }
           | NOT COND {$$ = not_cond($2); }
-          | EXPRESSION {$$ = $1 ;}
+          | EXPRESSION CONDITIONAL_OPERATOR EXPRESSION { $$ = $1 ;}
           | TRUE {$$ = new_true_node();}
           | FALSE {$$ = new_false_node();}
           ;
@@ -117,22 +117,30 @@ ASSIGN  : ID '=' EXPRESSION ';' {$$= new_assign_node($1, $3);}
 EXPRESSION :            
            EXPRESSION OPERATOR EXPRESSION {$$ = new_compose_expr_node($1,$2,$3);}
           | ID  {$$ = new_var_node($1);}
-          | VALUE {  $$ = new_const_node($1); }
+          | VALUE {  $$ = $1; }
           | CALL {  $$ = $1 ;}
           ;   
+
+VALUE :
+          vTEXT
+        | vINT
+        | vDOUBLE
+        | 
 
 OPERATOR  : '+'
           | '-'
           | '*'
           | '/'
-          | '<'
+          ;
+
+CONDITIONAL_OPERATOR :  '<'
           | '>'
           | LE
           | GE
           | EQ
           | NE
-
-
+          ;
+        
 T         : 
             INT 
           | DOUBLE

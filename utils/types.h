@@ -17,7 +17,20 @@ typedef struct variable {
     char * name;
     var_type type;
     variable_value value;
+    //agregar padding??
 } variable;
+
+typedef struct param_type_node{
+    struct param_type_node * next;
+    var_type type;
+}param_type_node;
+
+typedef struct function {
+    char * name;
+    var_type return_type;
+    int param_qty;
+    struct param_type_node * first;
+} function;
 
 
 

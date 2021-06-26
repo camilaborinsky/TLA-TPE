@@ -2,31 +2,16 @@
 #include "ast.h"
 #include <stdio.h>
 
-typedef enum node_type{
-    ROOT = 0,
-    DECLARATION_N,
-    CONSTANT_N,
-    CTL_N,
-    LOOP_N,
-    FUNCALL_N,
-    FUNDECL_N,
-    ASSIGN_N,
-    VARIABLE_REF_N,
-    EXPRESSION_N,
-    CONDITION_N,
-    
-}node_type;
-
 void dummy(ast_node_t *);
 void generate_declaration_code(declaration_node_t * declaration_node);
 void generate_constant(ast_node_t constant);
 void generate_if_code(if_node_t * if_node);
 void generate_loop_code(while_node_t * loop_node);
-void generate_function_call(ast_node_t * node);
-void generate_function_declaration(ast_node_t * node);
+void generate_function_call(func_call_node_t * fun_call);
+void generate_function_declaration(function_node_t * node);
 void generate_assign_code(assign_node_t * assign_node);
 void generate_variable(ast_node_t * node);
-void generate_expression_code(expression_node_t * expression_node);
+void generate_expression_code(compound_expression_node_t * expression_node);
 void generate_condition_code(condition_node_t * condition_node);
 
 
@@ -45,20 +30,33 @@ void (*generators[])(ast_node_t * node) = {
 
 };
 
+
+
 void generate_list(list_node_t * list);
+
+void generate(ast_node_t * node){
+     generators[node->type](node);
+}
+
+void dummy(ast_node_t * dummy){};
 
 void generate_code(root_node_t * tree){
     generate_initial_setup();
     generate_list(tree->global_variables);
     generate_list(tree->functions);
+    printf("int main(){");
     generate_list(tree->main);
-
-
+    printf("}");
+    
 }
 
 void generate_list(list_node_t * list){
+    list_node_t * prev;
     while(list != NULL){
-        generators[list->node->type](list->node);
+        generate(list->node);
+        prev = list;
+        list=list->next;
+        free(prev);
     }
 }
 
@@ -69,41 +67,68 @@ void generate_initial_setup(){
 
 void generate_if_code(if_node_t * if_node){
     printf("if(");
-    generate_condition_code(if_node->condition);
+    //generate_condition_code(if_node->condition);
+    generate(if_node->condition);
     printf("){");
-    generate_main_code(if_node->then);
+    //generate_main_code(if_node->then);
+    generate(if_node->then);
     printf("}");
     free(if_node);
 }
 
 void generate_loop_code(while_node_t * loop_node){
     printf("while(");
-    generate_condition_code(loop_node->condition);
+    //generate_condition_code(loop_node->condition);
+    generate(loop_node->condition);
     printf("){");
-    generate_main_code(loop_node->routine);
+    //generate_main_code(loop_node->routine);
+    generate(loop_node->routine);
     printf("}");
     free(loop_node);
 }
 
 void generate_declaration_code(declaration_node_t * declaration_node){
-    generate_type_code(declaration_node->var->type);
+    //generate_type_code(declaration_node->var->type);
+    generate(declaration_node->var->type);
     printf("%s;", declaration_node->var->name);
     free(declaration_node);
 }
 
 void generate_assign_code(assign_node_t * assign_node){
     printf("%s = ", assign_node->var->name);
-    generate_expression_code(assign_node->expression);
+    //generate_expression_code(assign_node->expression);
+    generate(assign_node -> expression);
     free(assign_node);
 }
 
-void generate_expression_code(expression_node_t * expression_node){
-    
+void generate_expression_code(compound_expression_node_t * expression_node){ 
+    generate(expression_node->left);
+    printf("%c", expression_node->operator);
+    generate(expression_node->right);
+   
 }
 
 void generate_condition_code(condition_node_t * condition_node){
-
+    printf("true");
 }
-void generate_main_code(list_node_t * instructions){
 
+void generate_function_call(func_call_node_t * fun_call){
+    printf("%s(", fun_call->name);
+    generate_list(fun_call->params);
+    printf(");");
+    free(fun_call->name);
+    free(fun_call);
+}
+
+void generate_function_declaration(function_node_t * node){
+    //generate_type_code(node->function->return_type);
+    generate(node->function->return_type);
+    printf(" %s(", node->function->name);
+    generate_list(node->parameters);
+    printf("){");
+    generate_list(node->code);
+    printf("}");
+    free(node->function->name);
+    free(node->function);
+    free(node);
 }
