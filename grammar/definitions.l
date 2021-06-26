@@ -14,9 +14,9 @@ text \"[^\"]*\"
 %%
 [\n\t ]			;
 
-{integer}       {yylval.integer=atoi(yytext); return VALUE;}
-{float}     	{yylval.decimal=strtof(yytext,0); return VALUE;}
-{text}     	    {yylval.string=strdup(yytext); return VALUE;}
+{integer}       {yylval.integer=atoi(yytext); return vINT;}
+{float}     	{yylval.decimal=strtof(yytext,0); return vDOUBLE;}
+{text}     	    {yylval.string=strdup(yytext); return vTEXT;}
 
 [ \t]+          ;
 
@@ -47,8 +47,8 @@ text \"[^\"]*\"
 "not"           {return NOT;}
 "mischief managed" {return RETURN;}
 
-"true"          {return TRUE;}
-"false"         {return FALSE;}
+"true"          {yylval.bool = 1; return vBOOL;}
+"false"         {yylval.bool = 0; return vBOOL;}
 
 
 {name}          {yylval.string = strdup(yytext); return ID;}

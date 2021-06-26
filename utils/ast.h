@@ -8,18 +8,12 @@ typedef enum node_type{
     CONSTANT_N,
     CTL_N,
     LOOP_N,
-    ARITHMETIC_N,
     FUNCALL_N,
     FUNDECL_N,
-    INT_N,
-    TRUE_N,
-    FALSE_N,
-    STRING_N,
     ASSIGN_N,
     VARIABLE_REF_N,
     EXPRESSION_N,
     CONDITION_N,
-    
 }node_type;
 
 typedef struct if_node_t{
@@ -44,24 +38,12 @@ typedef struct root_node_t{
     list_node_t* main;
 }root_node_t;
 
-
-
-
 typedef struct while_node_t{
     node_type type;
     ast_node_t * condition;
     ast_node_t * routine;
 }while_node_t;
 
-typedef struct string_node_t{
-    node_type type;
-    char * string;
-}string_node_t;
-
-typedef struct int_node_t{
-    node_type type;
-    int value;
-}int_node_t;
 
 typedef struct declaration_node_t{
     node_type type;
@@ -72,7 +54,6 @@ typedef struct declaration_node_t{
 typedef struct expression_node_t{
     node_type type;
     var_type expression_type;
-
 }expression_node_t;
 typedef struct assign_node_t{
     node_type type;
@@ -83,19 +64,11 @@ typedef struct assign_node_t{
 
 typedef struct function_node_t{
     node_type type;
-    var_type return_type;
-    char * name;
+    function * function;
     list_node_t * parameters;
     list_node_t * code;
 } function_node_t;
 
-typedef struct true_node_t{
-    node_type type;
-}true_node_t;
-
-typedef struct false_node_t{
-    node_type type;
-}false_node_t;
 
 typedef struct condition_node_t{
     node_type type;
@@ -124,16 +97,21 @@ typedef struct const_node_t{
     variable_value value;
 }const_node_t;
 
+typedef struct func_call_node_t{
+    node_type type;
+    char * name;
+    list_node_t * params;
+}func_call_node_t;
 
+
+
+//CREATE
 
 //void add_decl_node(list_node_t * global_variables, declaration_node_t * declaration_node);
 //void add_func_node(list_node_t * functions, function_node_t * function_node);
 list_node_t * concat_lists(list_node_t * list1, list_node_t * list2 );
 list_node_t * concat_node(list_node_t * list, ast_node_t * code );
-true_node_t * new_true_node();
-false_node_t * new_false_node();
 root_node_t * new_root_node();
-int_node_t * new_int_node(int value);
 declaration_node_t * new_declaration_node(char * name,var_type type);
 assign_node_t* new_assign_node(char * name, expression_node_t * expression);
 condition_node_t* new_compose_cond_node(condition_node_t * left, char operator,condition_node_t * right);
@@ -146,13 +124,19 @@ while_node_t* new_loop_node(condition_node_t * condition,list_node_t*  code);
 variable_node_t* new_var_node(char * variable);
 const_node_t* new_const_node(variable_value value);
 list_node_t * new_param_decl_node(char * name, var_type type);
-list_node_t * new_param_node(char * name);
+list_node_t * new_param_node(expression_node_t * expression_node);
 function_node_t * new_function_node(var_type type, char * name, list_node_t * params, list_node_t * code);
+func_call_node_t * new_function_call_node(char * name, list_node_t * params);
 
+const_node_t * new_double_node(double value);
+const_node_t * new_int_node(int value);
+const_node_t * new_string_node(char * value);
+const_node_t * new_true_node();
+const_node_t * new_false_node();
 
-int_node_t * new_int_node(int value);
-string_node_t * new_string_node(char * value);
-true_node_t * new_true_node();
-false_node_t * new_false_node();
+//FREE
+
+void free_root_node(root_node_t root);
+void free_node_list(list_node_t first);
 
 #endif
