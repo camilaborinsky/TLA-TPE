@@ -16,12 +16,15 @@ declaration_node_t * new_declaration_node(char * var_name,var_type type){
     var->name = calloc(1, strlen(var_name));
     strcpy(var->name, var_name);
     var->type = type;
+
     if(insert( var ) < 0 ){
          fprintf(stderr, "Ya existe una variable definida con ese nombre\n");
          free(var->name);
          free(var);
          return NULL;
     }
+    
+
     declaration_node_t * new_node = calloc(1, sizeof(declaration_node_t));
     new_node->type = DECLARATION_N;
     new_node->var = var;
@@ -140,27 +143,28 @@ const_node_t * new_false_node(){
 }
 
 
-const_node_t * new_int_node(int value){
+const_node_t * new_int_node(variable_value value){
     const_node_t * const_node = calloc(1, sizeof(const_node_t));
     const_node->type = CONSTANT_N;
     const_node->constant_type=tINT;
-    const_node->value.int_val = value;
+    const_node->value.int_val = value.int_val;
     return const_node;
 }
 
-const_node_t * new_double_node(double value){
+const_node_t * new_double_node(variable_value value){
     const_node_t * const_node = calloc(1, sizeof(const_node_t));
     const_node->type = CONSTANT_N;
     const_node->constant_type=tDOUBLE;
-    const_node->value.double_val = value;
+    const_node->value.double_val = value.double_val;
     return const_node;
 }
 
-const_node_t * new_string_node(char * value){
+const_node_t * new_string_node(variable_value value){
     const_node_t * string_node = calloc(1, sizeof(const_node_t));
     string_node->type = CONSTANT_N;
     string_node->constant_type = tTEXT;
-    string_node->value.text_val = value;
+    string_node->value.text_val = value.text_val;
+    return string_node;
 }
 
 list_node_t * new_param_decl_node(char * name, var_type type){
@@ -220,20 +224,21 @@ func_call_node_t * new_function_call_node(char * name, list_node_t * params){
             return NULL;
         }
         if(params->node->type != aux_type->type){
-            fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\'y su declaración.\n",name);
+            fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\' y su declaración.\n",name);
             return NULL;
         }else{
             aux=aux->next;
             aux_type = aux_type->next;
         }
     }
-    if( aux_type == NULL){
-        fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\'y su declaración.\n",name);
+    if( aux_type == NULL && aux!=NULL){
+        fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\' y su declaración.\n",name);
         return NULL;
         //ERROR: PARAMETROS DE MAS EN LA LLAMADA A LA FUNCION
     }
     func_call_node->name=name;
     func_call_node->params=params;
+    return func_call_node;
     
 }
 
@@ -277,10 +282,18 @@ list_node_t * concat_node(list_node_t * list, ast_node_t * code ){
 }
 
 list_node_t * concat_lists(list_node_t * main, list_node_t * instructions){
-    list_node_t * aux = main;
-    while(aux->next != NULL ) aux = aux->next;
-    aux->next = instructions;
-    return aux;
+    //list_node_t * aux = main;
+    //  if(aux == NULL)
+    //     aux = instructions;
+    //else{
+        // while(aux->next != NULL ) aux = aux->next;
+        // aux->next = instructions;
+    while(instructions->next != NULL ) instructions = instructions->next;
+    instructions->next = main;
+    //}
+    
+   
+    return instructions;
     
 
 }

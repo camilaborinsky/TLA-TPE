@@ -23,8 +23,10 @@ unsigned int num_blocks;
 
 void init_table(){
     current_scope = 0;
-    size = BLOCK_SIZE;
+    size = 0;
+    num_blocks =1;
     hash_table = calloc(BLOCK_SIZE,sizeof(node_t *));
+    fprintf(stderr,"symbol table init\n");
 }
 
 unsigned long long hash(char * name)
@@ -40,13 +42,14 @@ unsigned long long hash(char * name)
 
 int insert(variable * var){
     unsigned long long pre = hash(var->name);
-    unsigned int key_index = pre%size;
+    unsigned int key_index = pre%(num_blocks * BLOCK_SIZE);
     node_t * node = hash_table[key_index];
     
     
     while(node != NULL && node->prehash != pre) node = node->next;
-
+   
     if (node == NULL){
+        
         node = (node_t *) malloc(sizeof(node_t));
         node->var = var;
         node->scope = current_scope;
@@ -54,6 +57,7 @@ int insert(variable * var){
         hash_table[key_index] = node;
         size++;
     }else{
+       
         if(node->scope == current_scope){
             printf("Multiple declaration of variable %s", var->name);
             return MULTIPLE_DECLARATION;       
@@ -64,8 +68,8 @@ int insert(variable * var){
 
         }
     }
-
-    if((size*1.0) / num_blocks*BLOCK_SIZE >= THRESHOLD ){
+    
+    if((size*1.0) / (num_blocks*BLOCK_SIZE) >= THRESHOLD ){
   
         num_blocks ++;
         hash_table = realloc(hash_table, sizeof(node_t *)*num_blocks * BLOCK_SIZE);
@@ -81,18 +85,18 @@ void expand_table(){
 
 variable * lookup(char * name){
     unsigned long long pre = hash(name);
-    unsigned int index = pre % size;
+    unsigned int index = pre % (num_blocks * BLOCK_SIZE);
     node_t * node = hash_table[index];
     while(node != NULL && node->prehash == pre) node = node->next;
     if(node->scope <= current_scope)
-        return &node->var;
+        return node->var;
     else
         return NULL;
 }
 
 variable * lookup_in_scope(char * name, int scope){
     unsigned long long pre = hash(name);
-    unsigned int index = pre % size;
+    unsigned int index = pre % (num_blocks * BLOCK_SIZE);
     node_t * node = hash_table[index];
     while(node != NULL && node->prehash == pre) node = node->next;
     if(node->scope <= scope)

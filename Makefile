@@ -6,7 +6,7 @@ all: demo parser
 parser: grammar/grammar.y grammar/definitions.l $(PARSER_SOURCES) $(PARSER_HEADERS)
 	yacc -d grammar/grammar.y -Wno-other -Wno-yacc -Wno-conflicts-sr
 	lex grammar/definitions.l
-	gcc -o parser lex.yy.c y.tab.c $(PARSER_SOURCES) -Wno-implicit-int -Wno-incompatible-pointer-types   -ly
+	gcc -o parser lex.yy.c y.tab.c $(PARSER_SOURCES) -g -Wno-implicit-int -Wno-incompatible-pointer-types   -ly
 
 demo: demo.c lib/figures.c lib/figures.h
 	$(CC) demo.c lib/figures.c lib/handlers.c -o demo  -Wall -fsanitize=address -pedantic -lncurses -lm

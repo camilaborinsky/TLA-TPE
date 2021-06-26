@@ -46,9 +46,9 @@ void generate_code(root_node_t * tree){
     generate_initial_setup();
     generate_list(tree->global_variables);
     generate_list(tree->functions);
-    printf("int main(){");
+    printf("int main(){\n");
     generate_list(tree->main);
-    printf("}");
+    printf("return 0;\n}\n\n\n");
 }
 
 void generate_list(list_node_t * list){
@@ -63,7 +63,7 @@ void generate_list(list_node_t * list){
 
 
 void generate_initial_setup(){
-    printf("#include<stdlib.h>\n #include<stdio.h>\n #include<strings.h>\n");
+    printf("\n\n\n#include<stdlib.h>\n#include<stdio.h>\n#include<strings.h>\n\n");
 }
 
 void generate_type_code(var_type type){
@@ -74,10 +74,10 @@ void generate_if_code(if_node_t * if_node){
     printf("if(");
     //generate_condition_code(if_node->condition);
     generate(if_node->condition);
-    printf("){");
+    printf("){\n");
     //generate_main_code(if_node->then);
     generate(if_node->then);
-    printf("}");
+    printf("}\n");
     free(if_node);
 }
 
@@ -85,10 +85,10 @@ void generate_loop_code(while_node_t * loop_node){
     printf("while(");
     //generate_condition_code(loop_node->condition);
     generate(loop_node->condition);
-    printf("){");
+    printf("){\n");
     //generate_main_code(loop_node->routine);
     generate(loop_node->routine);
-    printf("}");
+    printf("}\n");
     free(loop_node);
 }
 
@@ -96,7 +96,7 @@ void generate_loop_code(while_node_t * loop_node){
 void generate_declaration_code(declaration_node_t * declaration_node){
     generate_type_code(declaration_node->var->type);
     //generate(declaration_node->var->type);
-    printf(" %s;", declaration_node->var->name);
+    printf(" %s;\n", declaration_node->var->name);
     free(declaration_node);
 }
 
@@ -104,7 +104,7 @@ void generate_assign_code(assign_node_t * assign_node){
     printf("%s = ", assign_node->var->name);
     //generate_expression_code(assign_node->expression);
     generate(assign_node -> expression);
-    printf(";");
+    printf(";\n");
     free(assign_node);
 }
 
@@ -122,7 +122,7 @@ void generate_condition_code(condition_node_t * condition_node){
 void generate_function_call(func_call_node_t * fun_call){
     printf("%s(", fun_call->name);
     generate_list(fun_call->params);
-    printf(");");
+    printf(");\n");
     free(fun_call->name);
     free(fun_call);
 }
@@ -132,9 +132,9 @@ void generate_function_declaration(function_node_t * node){
     //generate(node->function->return_type);
     printf(" %s(", node->function->name);
     generate_list(node->parameters);
-    printf("){");
+    printf("){\n");
     generate_list(node->code);
-    printf("}");
+    printf("}\n");
     free(node->function->name);
     free(node->function);
     free(node);

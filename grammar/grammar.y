@@ -3,6 +3,7 @@
         #include <stdlib.h>
         #include "utils/types.h"
         #include "utils/symbol_table.h"
+        #include "utils/code_generator.h"
         #include "utils/ast.h"
 }
 
@@ -47,16 +48,16 @@
 PROGRAM   : START  S  RETURN 
           | S {return 0;}
 
-S         : DECL S  {concat_node(root->global_variables,$1);}
-          | FUNC S  {concat_node(root->functions, $1);}
-          | MAIN_CODE S {concat_lists(root->main, $1); }
-          | 
+S         : DECL S  {root->global_variables = concat_node(root->global_variables,$1);}
+          | FUNC S  {root->functions = concat_node(root->functions, $1);}
+          | MAIN_CODE S {root->main = concat_lists(root->main, $1); }
+          | {$$ = 0;}
           ;
 
 MAIN_CODE : CTL MAIN_CODE {$$ = concat_node($2,$1); }
           | LOOP MAIN_CODE {$$ = concat_node($2,$1); }
           | SMP MAIN_CODE {$$ = concat_node($2, $1);}
-          |
+          | {$$ = 0;}
           ;
 
 FUNC  : FUNCTION ID ':' T '(' PARAM_DECL_LIST ')' '{' CODE '}' {$$ = new_function_node($2, $4, $6, $9);}
@@ -74,7 +75,7 @@ CODE      : CTL CODE { $$ = concat_node($2,$1); }
           | LOOP CODE {$$ = concat_node($2,$1); }
           | SMP CODE  {$$ = concat_node($2,$1); }
           | DECL CODE {$$ = concat_node($2,$1); }
-          |
+          | {$$ = 0;}
           ;
 
 SMP      : ASSIGN {$$ = $1;} 
@@ -121,10 +122,10 @@ EXPRESSION :
           ;   
 
 VALUE :
-          vTEXT
-        | vINT
-        | vDOUBLE
-        | 
+          vTEXT {$$ = new_string_node($1);}
+        | vINT {$$ = new_int_node($1);}
+        | vDOUBLE {$$= new_double_node($1);}
+        ;
 
 OPERATOR  : '+'
           | '-'
