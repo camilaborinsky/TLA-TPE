@@ -12,10 +12,13 @@ typedef enum node_type{
     FUNCALL_N,
     FUNDECL_N,
     INT_N,
+    TRUE_N,
+    FALSE_N,
     STRING_N,
     ASSIGN_N,
     VARIABLE_REF_N,
-    EXPRESSION,
+    EXPRESSION_N,
+    CONDITION_N,
     
 }node_type;
 
@@ -35,7 +38,7 @@ typedef struct root_node_t{
 typedef struct if_node_t{
     node_type type;
     ast_node_t * condition;
-    ast_node_t * then;
+    list_node_t * then;
 }if_node_t;
 
 
@@ -90,11 +93,15 @@ typedef struct false_node_t{
 }false_node_t;
 typedef struct condition_node_t{
     node_type type;
+    condition_node_t * left;
+    condition_node_t * right;
+    char operator;
 }condition_node_t;
 
 typedef struct expression_node_t{
     node_type type;
     var_type expression_type;
+
 }expression_node_t;
 
 typedef struct compound_expression_node_t{
@@ -102,6 +109,7 @@ typedef struct compound_expression_node_t{
     var_type expression_type;
     expression_node_t * left;
     expression_node_t * right;
+    char operator;
 }compound_expression_node_t;
 
 typedef struct variable_node_t{
@@ -116,20 +124,27 @@ typedef struct const_node_t{
     variable_value * value;
 }const_node_t;
 
-add_decl_node(list_node_t * global_variables, declaration_node_t * declaration_node);
-add_func_node(list_node_t * functions, function_node_t * function_node);
-add_instructions(list_node_t * main, list_node_t * instructions );
-condition_node_t* new_compose_cond_node(condition_node_t * left, char * operator,condition_node_t * right);
-expression_node_t* new_compose_expr_node(expression_node_t * left,char * operator,expression_node_t right);
-true_node_t * new_true_node();
-false_node_t * new_false_node();
+void add_decl_node(list_node_t * global_variables, declaration_node_t * declaration_node);
+void add_func_node(list_node_t * functions, function_node_t * function_node);
+void add_instructions(list_node_t * main, ast_node_t * instructions );
+
+
 root_node_t new_root_node();
-int_node_t * new_int_node(int value);
-declaration_node_t * new_declaration_node(variable * var,var_type type);
+
+declaration_node_t * new_declaration_node(char * var_name,var_type type);
 assign_node_t* new_assign_node(char * name, expression_node_t * expression);
+condition_node_t* new_compose_cond_node(condition_node_t * left, char operator,condition_node_t * right);
+expression_node_t* new_compose_expr_node(expression_node_t * left,char operator,expression_node_t * right);
+
+if_node_t* new_if_node(condition_node_t * condition,list_node_t*  code);
+while_node_t* new_loop_node(condition_node_t * condition,list_node_t*  code);
+
 variable_node_t* new_var_node(char * variable);
 const_node_t* new_const_node(variable_value * value);
-if_node_t* new_if_node(condition_node_t * condition,list_node_t*  code);
-while_node_t new_loop_node(condition_node_t * condition,list_node_t*  code);
+
+int_node_t * new_int_node(int value);
+string_node_t * new_string_node(char * value);
+true_node_t * new_true_node();
+false_node_t * new_false_node();
 
 #endif

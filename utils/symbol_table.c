@@ -108,12 +108,15 @@ void next_scope(){
 
 void prev_scope(){
     node_t * node;
+    node_t * prev;
     
     for(int i = 0; i < size ; i++){
         if(hash_table[i] != NULL){
             node = hash_table[i];
             while(node != NULL && node->scope == current_scope){
+                prev = node;
                 node = node->next;
+                free(prev);  //TODO: REVISAR
             }
             hash_table[i] = node; 
         }
