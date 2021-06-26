@@ -23,6 +23,15 @@ struct circle {
     int radius;
 };
 
+struct line {
+    void (*draw)(struct line *);
+    int x, y, z, w;
+};
+struct dot {
+    void (*draw)(struct dot *);
+    int x, y;
+};
+
 struct join_figure {
     void (*draw)(struct join_figure *);
     int x, y;
@@ -49,10 +58,10 @@ int offset_x = 0;
 int screen_width;
 int screen_height;
 
-void init(){
-     initscr();
+void init() {
+    initscr();
     noecho();
-    nodelay(stdscr,TRUE);
+    nodelay(stdscr, TRUE);
     start_color();
     curs_set(0);
     getmaxyx(stdscr, screen_height, screen_width);
@@ -63,7 +72,7 @@ void init(){
 void draw_rect(rectangle *rect) {
     for (int x = 0; x < rect->width; x++)
         for (int y = 0; y < rect->height; y++)
-            setpix(offset_y - y - rect->y, offset_x + x + rect->x, pix);
+            setpix(offset_y + y + rect->y, offset_x + x + rect->x, pix);
 }
 
 void draw_circ(circle *circ) {
@@ -74,6 +83,30 @@ void draw_circ(circle *circ) {
         setpix(offset_y + y + circ->y, offset_x + x, pix);
         setpix(offset_y - y + circ->y, offset_x + x, pix);
     }
+}
+
+void draw_line(line *l) {
+    int dx = l->z - l->x;
+    int dy = l->w - l->y;
+
+    double tangent = dy == 0 ? 0 : dx * 1.0f / dy;
+    
+    if (dx < dy) {
+        for (int y = 0; y <= dy; y++) {
+            int x = y*tangent;
+            setpix(offset_y + y + l->y, offset_x + x + l->x, pix);
+        }
+        return;
+    }
+
+    for (int x = 0; x <= dx; x++) {
+        int y = x/tangent;
+        setpix(offset_y + y + l->y, offset_x + x + l->x, pix);
+    }
+}
+
+void draw_dot(dot *d) {
+    setpix(offset_y + d->y, offset_x + d->x, pix);
 }
 
 void draw_join_figure(join_figure *fig) {
@@ -109,11 +142,30 @@ circle *circ_init(int x, int y, int r) {
     circ->radius = r;
     return circ;
 }
+
+line *line_init(int x, int y, int z, int w) {
+    line *l = malloc(sizeof(line));
+    l->draw = draw_line;
+    l->x = x;
+    l->y = y;
+    l->z = z;
+    l->w = w;
+    return l;
+}
+
+dot *dot_init(int x, int y) {
+    dot *d = malloc(sizeof(line));
+    d->draw = draw_dot;
+    d->x = x;
+    d->y = y;
+    return d;
+}
+
 join_figure *join(int x, int y, figure *f1, figure *f2) {
     join_figure *fig = malloc(sizeof(join_figure));
 
     fig->f1 = f1;
-    fig->f2 =f2;
+    fig->f2 = f2;
 
     fig->x = x;
     fig->y = y;
@@ -121,15 +173,16 @@ join_figure *join(int x, int y, figure *f1, figure *f2) {
     return fig;
 }
 
-void draw(figure * fig){
+void draw(figure *fig) {
     fig->draw(fig);
 }
 
 void destroy(figure *fig) {
-    if(fig == NULL) return;  
-    if(fig->draw ==  (void (*)(figure*)) draw_join_figure){
-        join_figure * join_fig = (join_figure *)fig; 
-        if(join_fig->f1 != NULL) free(join_fig->f1);
-        if(join_fig->f2 != NULL) free(join_fig->f2);
-    } else free(fig);
+    if (fig == NULL) return;
+    if (fig->draw == (void (*)(figure *))draw_join_figure) {
+        join_figure *join_fig = (join_figure *)fig;
+        if (join_fig->f1 != NULL) free(join_fig->f1);
+        if (join_fig->f2 != NULL) free(join_fig->f2);
+    } else
+        free(fig);
 }
