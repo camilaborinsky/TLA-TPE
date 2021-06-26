@@ -1,5 +1,6 @@
 #include "symbol_table.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #define THRESHOLD 0.75
@@ -24,16 +25,15 @@ void init_table(){
     current_scope = 0;
     size = BLOCK_SIZE;
     hash_table = calloc(BLOCK_SIZE,sizeof(node_t *));
-
-
 }
+
 unsigned long long hash(char * name)
 {
-    unsigned long prehash = 5381;
+    unsigned long long prehash = 5381;
     int c;
 
     while (c = *name++)
-        prehash = ((prehash << 5) + hash) + c; 
+        prehash = ((prehash << 5) + prehash) + c; 
 
     return prehash;
 }

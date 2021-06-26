@@ -7,7 +7,7 @@
 root_node_t * new_root_node(){
     root_node_t *  node = calloc(1,sizeof(root_node_t));
     node->type=ROOT;
-    init_symbol_table();
+    init_table();
     return node;
 }
 
@@ -170,7 +170,7 @@ list_node_t * new_param_decl_node(char * name, var_type type){
     return params;
 }
 
-function_node_t * new_function_node(var_type type, char * name, list_node_t * params, list_node_t * code){
+function_node_t * new_function_node( char * name, var_type type, list_node_t * params, list_node_t * code){
    
     function * func = calloc(1, sizeof(function));
     func->name = name;

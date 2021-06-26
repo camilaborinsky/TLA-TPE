@@ -1,16 +1,17 @@
 #include "code_generator.h"
 #include "ast.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void dummy(ast_node_t *);
 void generate_declaration_code(declaration_node_t * declaration_node);
-void generate_constant(ast_node_t constant);
+void generate_constant(const_node_t * constant);
 void generate_if_code(if_node_t * if_node);
 void generate_loop_code(while_node_t * loop_node);
 void generate_function_call(func_call_node_t * fun_call);
 void generate_function_declaration(function_node_t * node);
 void generate_assign_code(assign_node_t * assign_node);
-void generate_variable(ast_node_t * node);
+void generate_variable(variable_node_t * node);
 void generate_expression_code(compound_expression_node_t * expression_node);
 void generate_condition_code(condition_node_t * condition_node);
 
@@ -30,6 +31,7 @@ void (*generators[])(ast_node_t * node) = {
 
 };
 
+char * types[] = {"int", "double" ,"bool", "char *" , "rectangle *", "line *", "circle *", "dot *"};
 
 
 void generate_list(list_node_t * list);
@@ -47,7 +49,6 @@ void generate_code(root_node_t * tree){
     printf("int main(){");
     generate_list(tree->main);
     printf("}");
-    
 }
 
 void generate_list(list_node_t * list){
@@ -63,6 +64,10 @@ void generate_list(list_node_t * list){
 
 void generate_initial_setup(){
     printf("#include<stdlib.h>\n #include<stdio.h>\n #include<strings.h>\n");
+}
+
+void generate_type_code(var_type type){
+    printf("%s",types[type]);
 }
 
 void generate_if_code(if_node_t * if_node){
@@ -87,10 +92,11 @@ void generate_loop_code(while_node_t * loop_node){
     free(loop_node);
 }
 
+
 void generate_declaration_code(declaration_node_t * declaration_node){
-    //generate_type_code(declaration_node->var->type);
-    generate(declaration_node->var->type);
-    printf("%s;", declaration_node->var->name);
+    generate_type_code(declaration_node->var->type);
+    //generate(declaration_node->var->type);
+    printf(" %s;", declaration_node->var->name);
     free(declaration_node);
 }
 
@@ -98,6 +104,7 @@ void generate_assign_code(assign_node_t * assign_node){
     printf("%s = ", assign_node->var->name);
     //generate_expression_code(assign_node->expression);
     generate(assign_node -> expression);
+    printf(";");
     free(assign_node);
 }
 
@@ -121,8 +128,8 @@ void generate_function_call(func_call_node_t * fun_call){
 }
 
 void generate_function_declaration(function_node_t * node){
-    //generate_type_code(node->function->return_type);
-    generate(node->function->return_type);
+    generate_type_code(node->function->return_type);
+    //generate(node->function->return_type);
     printf(" %s(", node->function->name);
     generate_list(node->parameters);
     printf("){");
@@ -130,5 +137,28 @@ void generate_function_declaration(function_node_t * node){
     printf("}");
     free(node->function->name);
     free(node->function);
+    free(node);
+}
+
+void generate_constant(const_node_t * constant){
+    switch (constant->constant_type)
+    {
+    case tBOOL:
+    case tINT:
+        printf("%d", constant->value.int_val);
+        break;
+    case tDOUBLE:
+        printf("%f",constant->value.double_val);
+        break;
+    case tTEXT:
+        printf("%s",constant->value.text_val);
+        break;
+    }
+}
+
+void generate_variable( variable_node_t * node){
+    printf(" %s ", node->var->name);
+    free(node->var->name);
+    free(node->var);
     free(node);
 }

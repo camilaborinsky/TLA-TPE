@@ -23,7 +23,7 @@ text \"[^\"]*\"
 {comment}       ;
 
 
-"I solemnly swear that I am up to no good"  {return BEGIN;}
+"I solemnly swear that I am up to no good"  {return START;}
 "int"           {yylval.type = tINT; return INT;}
 "double"        {yylval.type = tDOUBLE; return DOUBLE;}
 "bool"          {yylval.type = tBOOL; return BOOL;}
@@ -47,8 +47,8 @@ text \"[^\"]*\"
 "not"           {return NOT;}
 "mischief managed" {return RETURN;}
 
-"true"          {yylval.bool = 1; return vBOOL;}
-"false"         {yylval.bool = 0; return vBOOL;}
+"true"          {yylval.value.bool_val = 1; return TRUE;}
+"false"         {yylval.value.bool_val = 0; return FALSE;}
 
 
 {name}          {yylval.string = strdup(yytext); return ID;}

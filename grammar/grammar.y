@@ -1,15 +1,14 @@
+%code requires {
+        #include <stdio.h>
+        #include <stdlib.h>
+        #include "utils/types.h"
+        #include "utils/symbol_table.h"
+        #include "utils/ast.h"
+}
+
 %{
-
-#include <stdio.h>
-#include <stdlib.h>
-#include "utils/types.h"
-#include "utils/symbol_table.h"
-#include "utils/ast.h"
-
-int yylex();
-void yyerror();
-
-
+        int yylex();
+        void yyerror();
 %}
 
 %union{
@@ -25,9 +24,9 @@ void yyerror();
 
 %token<string> ID
 %token<type> INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE
-%token TRUE FALSE IF WHILE FUNCTION LET LE GE EQ NE NOT BEGIN RETURN
+%token IF WHILE FUNCTION LET LE GE EQ NE NOT START RETURN
 %token<integer> OR AND
-%token<value> vTEXT vINT vDOUBLE vBOOL 
+%token<value> vTEXT vINT vDOUBLE TRUE FALSE 
 %type <integer> OPERATOR
 %type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM COND CONDITIONAL_OPERATOR EXPRESSION VALUE
 %type<rnode> S
@@ -45,8 +44,8 @@ void yyerror();
 
 %%
 
-PROGRAM   : BEGIN  S  RETURN {return;}
-          | S {return;}
+PROGRAM   : START  S  RETURN 
+          | S {return 0;}
 
 S         : DECL S  {concat_node(root->global_variables,$1);}
           | FUNC S  {concat_node(root->functions, $1);}
@@ -165,5 +164,5 @@ int main() {
     //handle errors for ret values
 
     //call code generator
-    
+    generate_code(root);
 } 

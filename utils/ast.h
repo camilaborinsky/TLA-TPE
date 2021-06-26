@@ -125,7 +125,7 @@ variable_node_t* new_var_node(char * variable);
 const_node_t* new_const_node(variable_value value);
 list_node_t * new_param_decl_node(char * name, var_type type);
 list_node_t * new_param_node(expression_node_t * expression_node);
-function_node_t * new_function_node(var_type type, char * name, list_node_t * params, list_node_t * code);
+function_node_t * new_function_node( char * name, var_type type, list_node_t * params, list_node_t * code);
 func_call_node_t * new_function_call_node(char * name, list_node_t * params);
 
 const_node_t * new_double_node(double value);
