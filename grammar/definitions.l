@@ -1,6 +1,7 @@
 %{
     #include "y.tab.h"
     #include <strings.h>
+    #include "utils/types.h"
     #include "utils/symbol_table.h"
 %}
 
@@ -8,7 +9,7 @@ integer -?[0-9]+
 float   {integer}(\.{integer}+)?
 comment \/\/.*
 name [a-zA-Z]+ 
-text "[^"]*"
+text \"[^\"]*\"
 
 %%
 [\n\t ]			;

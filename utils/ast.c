@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+root_node_t * new_root_node(){
+    root_node_t *  node = calloc(1,sizeof(root_node_t));
+    node->type=ROOT;
+    init_symbol_table();
+    return node;
+}
 
 declaration_node_t * new_declaration_node(char * var_name,var_type type){
     variable * var=calloc(1, sizeof(variable));
@@ -72,10 +78,19 @@ variable_node_t* new_var_node(char * variable_name){
 condition_node_t* new_compose_cond_node(condition_node_t * left, char  operator,condition_node_t * right){
     condition_node_t * condition_node = calloc(1, sizeof(condition_node_t));
     condition_node->type = CONDITION_N;
-    condition_node->left = left,
-    condition_node->right = right,
+    condition_node->left = left;
+    condition_node->right = right;
     condition_node->operator = operator;
     return condition_node;
+}
+
+condition_node_t * not_cond(condition_node_t * right){
+    condition_node_t * condition_node = calloc(1, sizeof(condition_node_t));
+    condition_node->type = CONDITION_N;
+    condition_node->right = right;
+    condition_node->operator = '!';
+    return condition_node;
+
 }
 
 expression_node_t* new_compose_expr_node(expression_node_t * left,char operator,expression_node_t * right){
@@ -96,7 +111,7 @@ expression_node_t* new_compose_expr_node(expression_node_t * left,char operator,
 
 /* Terminal nodes */
 
-const_node_t* new_const_node(variable_value * value){
+const_node_t* new_const_node(variable_value value){
     const_node_t * const_node = calloc(1, sizeof(const_node_t));
     const_node->type = CONSTANT_N;
     const_node->value = value;
@@ -129,29 +144,65 @@ string_node_t * new_string_node(char * value){
     string_node->string = value;
 }
 
+list_node_t * new_param_decl_node(char * name, var_type type){
+    list_node_t * params = calloc(1, sizeof(list_node_t));
+    declaration_node_t * decl_node = new_declaration_node(name, type);
+    params->node = decl_node;
+    return params;
+}
+
+function_node_t * new_function_node(var_type type, char * name, list_node_t * params, list_node_t * code){
+    function_node_t * function = calloc(1, sizeof(function_node_t));
+    function->type = FUNDECL_N;
+    function->code = code;
+    function->parameters = params;
+    function->return_type = type;
+
+}
+
+
+list_node_t * new_param_node(char * name){
+    list_node_t * params = calloc(1, sizeof(list_node_t));
+    variable_node_t * var_node = new_var_node(name);
+    params->node = var_node;
+    return params;
+}
+
+
+
 
 /* ADD NODE FUNCTIONS*/
 
-void add_decl_node(list_node_t * global_variables, declaration_node_t * declaration_node){
-    list_node_t * new_node = calloc(1, sizeof(list_node_t));
-    new_node->node = declaration_node;
-    new_node->next = global_variables;
-    global_variables = new_node;
-}
+// void add_decl_node(list_node_t * global_variables, declaration_node_t * declaration_node){
+//     list_node_t * new_node = calloc(1, sizeof(list_node_t));
+//     new_node->node = declaration_node;
+//     new_node->next = global_variables;
+//     global_variables = new_node;
+// }
 
-void add_func_node(list_node_t * functions, function_node_t * function_node){
-    list_node_t * new_node = calloc(1, sizeof(list_node_t));
-    new_node->node = function_node;
-    new_node->next = functions;
-    functions = new_node;
+// void add_func_node(list_node_t * functions, function_node_t * function_node){
+//     list_node_t * new_node = calloc(1, sizeof(list_node_t));
+//     new_node->node = function_node;
+//     new_node->next = functions;
+//     functions = new_node;
 
-}
+// }
 
 
-void add_instructions(list_node_t * main, ast_node_t * code ){
+list_node_t * concat_node(list_node_t * list, ast_node_t * code ){
     list_node_t * new_node = calloc(1, sizeof(list_node_t));
     new_node->node = code;
-    new_node->next = main;
-    main = new_node;
+    new_node->next = list;
+    list = new_node;
+    return list;
+}
+
+list_node_t * concat_lists(list_node_t * main, list_node_t * instructions){
+    list_node_t * aux = main;
+    while(aux->next != NULL ) aux = aux->next;
+    aux->next = instructions;
+    return aux;
+    
+
 }
 

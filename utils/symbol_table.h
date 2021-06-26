@@ -1,3 +1,5 @@
+#ifndef SYMBOL_H
+#define SYMBOL_H
 #include "types.h"
 
 
@@ -14,3 +16,4 @@ variable * lookup_in_scope(char * name, int scope);
 void next_scope();
 void prev_scope();
 
+#endif

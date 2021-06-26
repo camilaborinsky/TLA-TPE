@@ -1,6 +1,6 @@
 #ifndef TYPES_H
 #define TYPES_H
-#define NULL 0
+
 
 typedef enum var_type{tINT=0, tDOUBLE, tBOOL, tTEXT, tRECTANGLE, tLINE, tCIRCLE, tDOT}var_type;
 
