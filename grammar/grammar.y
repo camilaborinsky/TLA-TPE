@@ -97,6 +97,7 @@ PARAM_LIST : PARAM {$$ = $1;}
 
 PARAM : EXPRESSION {$$ = new_param_node($1);}
       |  EXPRESSION',' PARAM  {$$ = concat_node($3,$1);}
+      |'{' CODE RET '}' {$$ = new_lambda_function(root,$2,$3);}
 
 
 DECL     : LET ID ':' T ';' {$$ = new_declaration_node($2, $4);}
@@ -125,7 +126,6 @@ EXPRESSION :
           | NOT EXPRESSION {$$ = not_expression_node($2);}
           | ID  {$$ = new_var_node($1);}
           | VALUE {  $$ = $1; }
-          | CALL {$$ = $1;}
           | '(' EXPRESSION ')' {set_closed($2); $$=$2;}
           ;   
 

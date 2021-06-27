@@ -134,10 +134,10 @@ const_node_t * new_false_node();
 void set_terminal(func_call_node_t * fun_call);
 void set_closed(expression_node_t * expr);
 void set_easter_egg(root_node_t * root);
-
+list_node_t * new_lambda_function(root_node_t * root,list_node_t * code, return_node_t * ret);
 //FREE
 
-void free_root_node(root_node_t root);
+void free_root_node(root_node_t root); // root_node_t *
 void free_node_list(list_node_t first);
 
 #endif

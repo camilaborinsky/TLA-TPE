@@ -32,6 +32,7 @@ declaration_node_t* new_declaration_node(char* var_name, var_type type) {
 }
 
 int check_compatibility(var_type t1, var_type t2) {
+    if (t1==tFUNCTION && t2 == tVOID) return 1;
     if (t1 == tDOUBLE && t2 == tINT) return 1;
     if (t1 == tFIGURE && (
         t2 == tRECTANGLE ||
@@ -170,7 +171,7 @@ list_node_t* new_param_decl_node(char* name, var_type type) {
 
 function_node_t* new_function_node(char* name, var_type type, list_node_t* params, list_node_t* code, return_node_t * return_node) {
     
-    if(return_node->expression->expression_type != type){
+    if( (return_node->expression == NULL && type != tVOID) || (return_node->expression != NULL && return_node->expression->expression_type != type)){
         fprintf(stderr,"Valor de retorno incompatible con la función\n");
         exit(1);
     }
@@ -221,7 +222,7 @@ func_call_node_t* new_function_call_node(char* name, list_node_t* params) {
             fprintf(stderr, "Incompatibilidad en la cantidad de parámetros de la llamada a la función '%s' y su declaración.\n", name);
             exit(1);
         }
-        if (!check_compatibility(aux_type->type, ((expression_node_t*)params->node)->expression_type)) {
+        if (!check_compatibility(aux_type->type, ((expression_node_t*)aux->node)->expression_type)) {
             fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\' y su declaración.\n", name);
             exit(1);
         } else {
@@ -290,3 +291,29 @@ void set_easter_egg(root_node_t * root){
     root->easter_egg = 1;
 }
 
+char *random_string(size_t size)
+{
+    const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJK";
+    char * str = malloc(size+1);
+    for (size_t n = 0; n < size; n++) {
+        int key = rand() % sizeof(charset);
+        str[n] = charset[key];
+    }
+    str[size] = '\0';
+    return str;
+}
+
+list_node_t * new_lambda_function(root_node_t * root, list_node_t * code, return_node_t * ret){
+    
+    char * name = NULL;
+    while(name == NULL || lookup(name) != NULL){
+        if(name != NULL) free(name);
+        name = random_string(10);
+    }
+     
+    function_node_t * func = new_function_node(name,tVOID,NULL, code, ret);
+    root->functions = concat_node(root->functions, func);
+    variable_node_t * var = new_var_node(name);
+    return new_param_node(var);
+
+}

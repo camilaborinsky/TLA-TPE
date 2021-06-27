@@ -29,15 +29,14 @@ void insert_function(var_type return_type, char *name, int qty, ...) {
     function->param_qty = qty;
     function->return_type = return_type;
     if (qty > 0) {
-        param_type_node *param;
-        param_type_node *aux;
-
         va_start(types, qty);
-        for (int i = 0; i < qty; i++) {
-            aux = param;
-            param = calloc(1, sizeof(param_type_node));
-            param->type = va_arg(types, var_type);
-            param->next = aux;
+        param_type_node * param = calloc(1, sizeof(param_type_node));
+        param->type = va_arg(types, var_type);
+        param_type_node *aux = param;       
+        for (int i = 1; i < qty; i++) {
+            aux->next = calloc(1, sizeof(param_type_node));
+            aux->next->type = va_arg(types, var_type);
+            aux = aux -> next;
         }
         function->first = param;
         va_end(types);
@@ -54,7 +53,7 @@ void insert_lib_functions() {
     insert_function(tVOID, "draw", 1, tFIGURE);
     insert_function(tVOID, "move", 2, tINT, tINT);
     insert_function(tVOID, "DESTROY", 1, tFIGURE);
-    insert_function(tVOID, "set_interval", 2, tINT, tFUNCTION);
+    insert_function(tVOID, "set_interval", 2, tINT, tFUNCTION); // estan todas al reves por alguna razon
     insert_function(tVOID, "on_key", 2,  tINT, tFUNCTION);
     insert_function(tVOID, "loop", 0);
 }
