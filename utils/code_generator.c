@@ -61,6 +61,16 @@ void generate_list(list_node_t * list){
     }
 }
 
+void generate_params_list(list_node_t * list){
+    list_node_t * prev;
+    while(list != NULL){
+        generate(list->node);
+        if(list->next != NULL ) printf(",");
+        prev = list;
+        list=list->next;
+        //free(prev);
+    }
+}
 
 void generate_initial_setup(){
     printf(
@@ -123,7 +133,7 @@ void generate_expression_code(compound_expression_node_t * expression_node){
 
 void generate_function_call(func_call_node_t * fun_call){
     printf("%s(", fun_call->name);
-    generate_list(fun_call->params);
+    generate_params_list(fun_call->params);
     printf(")");
     if(fun_call->terminal) printf(";\n");
     //free(fun_call->name);
