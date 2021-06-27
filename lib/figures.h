@@ -20,7 +20,7 @@ rectangle * rect_init(int x, int y, int w, int h);
 circle * circ_init(int x, int y, int r);
 line * line_init(int x, int y, int z, int w);
 dot * dot_init(int x, int y);
-join_figure *join(int x, int y, figure *f1, figure *f2);
+join_figure *join(figure *f1, figure *f2);
 
 void destroy(figure * fig);
 

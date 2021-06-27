@@ -317,3 +317,27 @@ list_node_t * new_lambda_function(root_node_t * root, list_node_t * code, return
     return new_param_node(var);
 
 }
+
+func_call_node_t * new_join_call(char * var1, char * var2){
+    variable_node_t * f1 = new_var_node(var1);
+    variable_node_t * f2 = new_var_node(var2);
+    list_node_t * params = new_param_node(f1);
+    params->next = new_param_node(f2); 
+    return new_function_call_node("join",params);
+}
+
+decl_assign_node_t * new_assign_decl_node(char * name, var_type type, expression_node_t * expr){
+    variable* var = calloc(1, sizeof(variable));
+    var->name = calloc(1, strlen(name));
+    strcpy(var->name, name);
+    var->type = type;
+    if (insert(var) < 0) {
+        fprintf(stderr, "Ya existe una variable definida con ese nombre\n");
+        exit(1);
+    }
+    decl_assign_node_t * node = calloc(1,sizeof(decl_assign_node_t));
+    node->expression = expr;
+    node->var = var;
+    node->type = DECL_ASSIGN_N;
+    return node;
+}

@@ -14,6 +14,7 @@ typedef enum node_type{
     VARIABLE_REF_N,
     EXPRESSION_N,
     RETURN_N,
+    DECL_ASSIGN_N,
 }node_type;
 
 typedef struct if_node_t{
@@ -105,6 +106,13 @@ typedef struct return_node_t{
     expression_node_t * expression;
 }return_node_t;
 
+typedef struct decl_assign_node_t{
+    node_type type;
+    variable * var;
+    expression_node_t * expression;
+    
+}decl_assign_node_t;
+
 
 
 list_node_t * concat_lists(list_node_t * list1, list_node_t * list2 );
@@ -125,6 +133,7 @@ list_node_t * new_param_node(expression_node_t * expression_node);
 function_node_t * new_function_node( char * name, var_type type, list_node_t * params, list_node_t * code, return_node_t * return_node);
 func_call_node_t * new_function_call_node(char * name, list_node_t * params);
 return_node_t * new_return_node(expression_node_t * expression);
+decl_assign_node_t * new_assign_decl_node(char * name, var_type type, expression_node_t * expr);
 
 const_node_t * new_double_node(variable_value value);
 const_node_t * new_int_node(variable_value value);
@@ -135,6 +144,7 @@ void set_terminal(func_call_node_t * fun_call);
 void set_closed(expression_node_t * expr);
 void set_easter_egg(root_node_t * root);
 list_node_t * new_lambda_function(root_node_t * root,list_node_t * code, return_node_t * ret);
+func_call_node_t * new_join_call(char * var1, char * var2);
 //FREE
 
 void free_root_node(root_node_t root); // root_node_t *

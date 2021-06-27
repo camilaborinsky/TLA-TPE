@@ -163,14 +163,14 @@ dot *dot_init(int x, int y) {
     return d;
 }
 
-join_figure *join(int x, int y, figure *f1, figure *f2) {
+join_figure *join(figure *f1, figure *f2) {
     join_figure *fig = malloc(sizeof(join_figure));
 
     fig->f1 = f1;
     fig->f2 = f2;
 
-    fig->x = x;
-    fig->y = y;
+    fig->x = 0;
+    fig->y = 0;
     fig->draw = draw_join_figure;
     return fig;
 }

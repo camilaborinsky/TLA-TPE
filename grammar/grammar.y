@@ -5,6 +5,7 @@
         #include "utils/symbol_table.h"
         #include "utils/code_generator.h"
         #include "utils/ast.h"
+        extern int yylineno;
 }
 
 %{
@@ -26,10 +27,10 @@
 %token<string> ID
 %token<type> INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE FIGURE VOID
 %token IF WHILE FUNCTION LET LE GE EQ NE NOT START RETURN END
-%token<integer> OR AND
+%token<integer> OR AND JOIN
 %token<value> vTEXT vINT vDOUBLE TRUE FALSE 
 %type <integer> OPERATOR
-%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM EXPRESSION VALUE RET
+%type<node> DECL ASSIGN DECL_ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM EXPRESSION VALUE RET
 %type<rnode> S
 %type<type> T FUNC_T
 %parse-param {root_node_t * root}
@@ -85,6 +86,7 @@ RET       : RETURN EXPRESSION ';' {$$ = new_return_node($2);}
           | RETURN ';' {$$ = new_return_node(0);}
 
 SMP      : ASSIGN ';' {$$ = $1;} 
+         | DECL_ASSIGN ';' {$$ = $1;} 
          | CALL  ';' { set_terminal($1); $$ = $1;}
          ;
 
@@ -120,13 +122,16 @@ CTL     : IF '(' EXPRESSION ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$
 
 ASSIGN  : ID '=' EXPRESSION {$$= new_assign_node($1, $3);}
 
+DECL_ASSIGN : LET ID ':' T '=' EXPRESSION {$$ = new_assign_decl_node($2, $4, $6);} 
    
 EXPRESSION :            
            EXPRESSION OPERATOR EXPRESSION {$$ = new_compose_expr_node($1,$2,$3);}
           | NOT EXPRESSION {$$ = not_expression_node($2);}
           | ID  {$$ = new_var_node($1);}
           | VALUE {  $$ = $1; }
+          | CALL {$$ = $1;}
           | '(' EXPRESSION ')' {set_closed($2); $$=$2;}
+          | ID JOIN ID {$$ = new_join_call($1,$3);}
           ;   
 
 VALUE :
@@ -168,16 +173,18 @@ int yywrap(){
         return 1;
 } 
 
+void yyerror(char * type, char* msg){
+        fprintf(stderr, "%s : %s en la linea %d\n", type, msg, yylineno);
+        exit(1);
+}
+
 int main() {
     root_node_t * root = new_root_node();
     int ret= yyparse(root);
-    if(ret != 0){
-            fprintf(stderr,"error parsing...\n");
-            exit(1);
-    }
     
     //handle errors for ret values
 
     //call code generator
     generate_code(root);
+    exit(0);
 } 

@@ -14,6 +14,7 @@ void generate_assign_code(assign_node_t * assign_node);
 void generate_variable(variable_node_t * node);
 void generate_expression_code(compound_expression_node_t * expression_node);
 void generate_return_code(return_node_t * node);
+void generate_decl_assign_code(decl_assign_node_t * node);
 
 
 void (*generators[])(ast_node_t * node) = {
@@ -28,6 +29,7 @@ void (*generators[])(ast_node_t * node) = {
     generate_variable,
     generate_expression_code,
     generate_return_code,
+    generate_decl_assign_code,
 
 };
 
@@ -170,5 +172,12 @@ void generate_variable( variable_node_t * node){
 void generate_return_code(return_node_t * node){
     printf("return ");
     if(node->expression != NULL) generate(node->expression);
+    printf(";\n");
+}
+
+void generate_decl_assign_code(decl_assign_node_t * node){
+    printf("%s %s = ",types[node->var->type],node->var->name);
+
+    generate(node->expression);
     printf(";\n");
 }

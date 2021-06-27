@@ -16,7 +16,8 @@ text \"[^\"]*\"
 "I solemnly swear that I am up to no good"  { return START;}
 "mischief managed" {return END;}
 
-[\n\t ]			;
+[\n]			{yylineno++;}
+[\t ]           ;
 
 {integer}       {yylval.value.int_val=atoi(yytext); return vINT;}
 {float}     	{yylval.value.double_val=strtof(yytext,0); return vDOUBLE;}
@@ -51,6 +52,7 @@ text \"[^\"]*\"
 "or"            {return OR;}
 "and"           {return AND;}
 "not"           {return NOT;}
+"join"          {return JOIN;}
 
 
 "true"          {yylval.value.bool_val = 1; return TRUE;}

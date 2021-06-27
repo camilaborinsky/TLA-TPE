@@ -49,7 +49,7 @@ void insert_lib_functions() {
     insert_function(tCIRCLE, "circ_init", 3, tINT, tINT, tINT);
     insert_function(tLINE, "line_init", 4, tINT, tINT, tINT, tINT);
     insert_function(tDOT, "dot_init", 2, tINT, tINT);
-    insert_function(tFIGURE, "join", 4, tINT, tINT, tFIGURE, tFIGURE);
+    insert_function(tFIGURE, "join", 2 , tFIGURE, tFIGURE);
     insert_function(tVOID, "draw", 1, tFIGURE);
     insert_function(tVOID, "move", 2, tINT, tINT);
     insert_function(tVOID, "DESTROY", 1, tFIGURE);
