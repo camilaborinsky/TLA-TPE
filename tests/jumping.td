@@ -4,11 +4,6 @@ let player:figure;
 let speed:int;
 speed = 0;
 
-let width:int;
-width = 100;
-let height:int;
-height = 20;
-
 let player_y:int;
 player_y = 10;
 
@@ -34,6 +29,10 @@ set_interval(50,{
     move_figure(player, 0, player_y);
     draw(player);
     speed = speed + 1;
+    cursor --> 0,0;
+    print --> "speed ";
+    printN --> speed;
+    print --> "\n";
     return;
 
 });

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #define pix -1
 
@@ -57,8 +58,8 @@ struct figure {
 
 int offset_y = 0;
 int offset_x = 0;
-int screen_width;
-int screen_height;
+int width;
+int height;
 
 void init() {
     initscr();
@@ -66,9 +67,10 @@ void init() {
     nodelay(stdscr, TRUE);
     start_color();
     curs_set(0);
-    getmaxyx(stdscr, screen_height, screen_width);
-    screen_width = screen_width / 2;
+    getmaxyx(stdscr, height, width);
+    width = width / 2;
     refresh();
+    cursor(0,0);
 }
 
 void draw_rect(rectangle *rect) {
@@ -114,8 +116,8 @@ void draw_dot(dot *d) {
 void draw_join_figure(join_figure *fig) {
     int x_backup = offset_x;
     int y_backup = offset_y;
-    offset_x = fig->x;
-    offset_y = fig->y;
+    offset_x = fig->x + offset_x;
+    offset_y = fig->y + offset_y;
     if (fig->f1 != NULL) fig->f1->draw(fig->f1);
     if (fig->f2 != NULL) fig->f2->draw(fig->f2);
     offset_x = x_backup;
@@ -200,4 +202,49 @@ void easter_egg(){
     sleep(3);
     clear();
 
+}
+
+
+void cursor(int x,int y){
+    move(y,x);
+}
+void print(char * str){
+    addstr(str);
+    refresh();
+}
+void printN(int n){
+    char buf[64];
+    sprintf(buf,"%d",n);
+    addstr(buf);
+    refresh();
+}
+
+void printD(double n){
+    char buf[64];
+    sprintf(buf,"%f",n);
+    addstr(buf);
+    refresh();
+}
+
+void printC(int c){
+    addch(c);
+    refresh();
+}
+
+int in(){
+    return getch();
+}
+
+char * concat(char * s1, char * s2){
+    int size = strlen(s1) + strlen(s2) + 1;
+    char * result = malloc(size);
+    sprintf(result,"%s%s",s1,s2);
+    return result;
+}
+
+char * append(char * s, int c){
+    int size = strlen(s) + 1;
+    char * result = malloc(size);
+    sprintf(result,"%s%c",s,c);
+    return result;
 }

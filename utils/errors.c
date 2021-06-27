@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include "code_generator.h"
 
-extern char ** types;
+extern char * types[];
+extern char * ops[];
 
 
 void multiple_declaration(char * var1, int var, int lineno){
@@ -10,15 +11,15 @@ void multiple_declaration(char * var1, int var, int lineno){
 }
 
 void incompatible_types_operation(var_type type1, var_type type2, char op, int lineno){
-    fprintf(stderr, "ERROR: Incompatible types %s and %s for operation %c in line %d\n\n",types[type1], types[type1], op, lineno );
+    fprintf(stderr, "ERROR: Incompatible types %s and %s for operation %s in line %d\n\n",types[type1], types[type2], ops[op], lineno );
 }
 
 void incompatible_types_function(var_type type1, var_type type2, char * function_name, int lineno){
-    fprintf(stderr, "ERROR: Incompatible types %s and %s for function %s in line %d\n\n",types[type1], types[type1], function_name, lineno );
+    fprintf(stderr, "ERROR: Incompatible types %s and %s for function %s in line %d\n\n",types[type1], types[type2], function_name, lineno );
 }
 
 void incompatible_types(var_type type1, var_type type2, int lineno){
-    fprintf(stderr, "ERROR: Incompatible types %s and %s in assign operation in line %d\n\n",types[type1], types[type1], lineno );
+    fprintf(stderr, "ERROR: Incompatible types %s and %s in assign operation in line %d\n\n",types[type1], types[type2], lineno );
 }
 
 void undefined_reference(char* var_name, int lineno){
@@ -26,7 +27,7 @@ void undefined_reference(char* var_name, int lineno){
 }
 
 void illegal_operation(var_type type, char operator, int lineno){
-    fprintf(stderr, "ERROR: Illegal operation %c for type %s in line %d\n\n",operator, types[type], lineno );
+    fprintf(stderr, "ERROR: Illegal operation %s for type %s in line %d\n\n",ops[operator], types[type], lineno );
 }
 
 void incompatible_return_type(var_type type1, var_type type2, char * function, int lineno){

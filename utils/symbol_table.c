@@ -22,6 +22,13 @@ node_t **hash_table;
 unsigned int size;
 unsigned int num_blocks;
 
+void insert_variable(char * name, var_type type){
+    variable * var = calloc(1,sizeof(function));
+    var->name = name;
+    var->type = type;
+    insert(var);
+}
+
 void insert_function(var_type return_type, char *name, int qty, ...) {
     va_list types;
     function *function = calloc(1, sizeof(function));
@@ -52,11 +59,22 @@ void insert_lib_functions() {
     insert_function(tFIGURE, "join", 2 , tFIGURE, tFIGURE);
     insert_function(tVOID, "draw", 1, tFIGURE);
     insert_function(tVOID, "move_figure", 3, tFIGURE,tINT, tINT);
-    insert_function(tVOID, "DESTROY", 1, tFIGURE);
+    insert_function(tVOID, "destroy", 1, tFIGURE);
     insert_function(tVOID, "set_interval", 2, tINT, tFUNCTION); // estan todas al reves por alguna razon
     insert_function(tVOID, "on_key", 2,  tINT, tFUNCTION);
     insert_function(tVOID, "loop", 0);
     insert_function(tVOID, "clear", 0);
+    insert_function(tVOID, "cursor", 2, tINT, tINT);
+    insert_function(tVOID, "print", 1, tTEXT);
+    insert_function(tVOID, "printN", 1,tINT);
+    insert_function(tVOID, "printD", 1,tDOUBLE);
+    insert_function(tVOID, "printC", 1,tINT);
+    insert_function(tTEXT, "concat", 2,tTEXT,tTEXT);
+    insert_function(tTEXT, "append", 2,tTEXT,tINT);
+    insert_function(tINT, "in", 0);
+
+    insert_variable("width",tINT);
+    insert_variable("height",tINT);
 }
 
 void init_table() {
@@ -131,7 +149,7 @@ variable *lookup_in_scope(char *name, int scope) {
     unsigned long long pre = hash(name);
     unsigned int index = pre % (num_blocks * BLOCK_SIZE);
     node_t *node = hash_table[index];
-    while (node != NULL && node->prehash != pre &&  node->scope != scope) node = node->next;
+    while (node != NULL && (node->prehash != pre ||  node->scope != scope)) node = node->next;
     if (node != NULL)
         return node->var;
     else

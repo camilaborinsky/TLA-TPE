@@ -11,6 +11,8 @@ extern int yylineno;
 
 
 int check_compatibility(var_type t1, var_type t2) {
+    if( t1 == tBOOL && t2 == tINT) return 1;
+    if( t2 == tBOOL && t1 == tINT) return 1;
     if (t1==tFUNCTION && t2 == tVOID) return 1;
     if (t1 == tDOUBLE && t2 == tINT) return 1;
     if (t1 == tFIGURE && (
@@ -94,10 +96,11 @@ variable_node_t* new_var_node(char* variable_name) {
 }
 
 expression_node_t* not_expression_node(expression_node_t* right) {
-    compound_expression_node_t* expression_node = calloc(1, sizeof(expression_node_t));
+    compound_expression_node_t* expression_node = calloc(1, sizeof(compound_expression_node_t));
     expression_node->type = EXPRESSION_N;
     expression_node->right = right;
-    expression_node->operator= '!';
+    expression_node->operator= oNOT;
+    expression_node->expression_type = tBOOL;
     return expression_node;
 }
 
@@ -106,7 +109,7 @@ expression_node_t* new_compose_expr_node(expression_node_t* left, char operator,
         incompatible_types_operation(left->expression_type, right->expression_type, operator, yylineno);
         exit(1);
     }
-    if (left->expression_type > tDOUBLE) {
+    if (left->expression_type > tBOOL) {
         illegal_operation(left->expression_type, operator, yylineno);
         exit(1);
     }
@@ -197,7 +200,7 @@ function_node_t* new_function_node(char* name, var_type type, list_node_t* param
     while (aux != NULL) {
         param_qty++;
         param_type_node* new_node = calloc(1, sizeof(param_type_node));
-        new_node->type = aux->node->type;
+        new_node->type = ((declaration_node_t *)aux->node)->var->type;
         new_node->next = func->first;
         func->first = new_node;
         aux = aux->next;

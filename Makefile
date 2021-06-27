@@ -14,6 +14,6 @@ compile:
 	./parser < $(FROM) > $(TO).c && $(CC) $(TO).c lib/figures.c lib/handlers.c -o $(TO) -w -lncurses -lm
 
 clean:
-	rm -rf demo lex.yy.c y.tab.c y.tab.h parser
+	rm -rf demo lex.yy.c y.tab.c y.tab.h parser compile
 
 .PHONY: compile

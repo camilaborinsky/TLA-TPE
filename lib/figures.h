@@ -24,9 +24,17 @@ join_figure *join(figure *f1, figure *f2);
 
 void destroy(figure * fig);
 
-extern int screen_width;
-extern int screen_height;
+extern int width;
+extern int height;
 
 void easter_egg();
+
+void cursor(int,int);
+void print(char * str);
+void printN(int n);
+void printD(double d);
+void printC(int c);
+char * concat(char * s1, char * s2);
+char * append(char * s, int c);
 
 #endif

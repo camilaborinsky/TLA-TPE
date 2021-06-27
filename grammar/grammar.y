@@ -25,7 +25,7 @@
 
 %token<string> ID
 %token<type> INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE FIGURE VOID
-%token IF WHILE FUNCTION LET LE GE EQ NE NOT START RETURN END
+%token IF WHILE FUNCTION LET LE GE EQ NE NOT START RETURN END RIGHT_ARROW
 %token<integer> OR AND JOIN
 %token<value> vTEXT vINT vDOUBLE TRUE FALSE 
 %type <integer> OPERATOR
@@ -90,6 +90,7 @@ SMP      : ASSIGN ';' {$$ = $1;}
          ;
 
 CALL    : ID '(' PARAM_LIST ')' {$$ = new_function_call_node($1, $3);}
+        | ID RIGHT_ARROW PARAM_LIST  {$$ = new_function_call_node($1, $3);}
         ;
 
 PARAM_LIST : PARAM {$$ = $1;}

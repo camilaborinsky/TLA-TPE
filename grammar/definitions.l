@@ -53,6 +53,7 @@ text \"[^\"]*\"
 "and"           {return AND;}
 "not"           {return NOT;}
 "join"          {return JOIN;}
+"-->"           {return RIGHT_ARROW;}
 
 
 "true"          {yylval.value.bool_val = 1; return TRUE;}
