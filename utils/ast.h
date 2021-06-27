@@ -76,6 +76,7 @@ typedef struct compound_expression_node_t{
     expression_node_t * left;
     expression_node_t * right;
     char operator;
+    int closed;
 }compound_expression_node_t;
 
 typedef struct variable_node_t{
@@ -130,6 +131,7 @@ const_node_t * new_string_node(variable_value value);
 const_node_t * new_true_node();
 const_node_t * new_false_node();
 void set_terminal(func_call_node_t * fun_call);
+void set_closed(expression_node_t * expr);
 
 //FREE
 

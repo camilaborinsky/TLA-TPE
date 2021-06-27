@@ -126,6 +126,7 @@ EXPRESSION :
           | ID  {$$ = new_var_node($1);}
           | VALUE {  $$ = $1; }
           | CALL {$$ = $1;}
+          | '(' EXPRESSION ')' {set_closed($2); $$=$2;}
           ;   
 
 VALUE :

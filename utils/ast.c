@@ -280,3 +280,9 @@ void set_terminal(func_call_node_t * fun_call){
     fun_call->terminal = 1;
 }
 
+void set_closed(expression_node_t * expression){
+    if(expression->type == EXPRESSION_N){
+        ((compound_expression_node_t *)expression)->closed = 1;
+    }
+}
+

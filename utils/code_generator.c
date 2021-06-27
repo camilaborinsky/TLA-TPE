@@ -117,10 +117,11 @@ void generate_assign_code(assign_node_t * assign_node){
 }
 
 void generate_expression_code(compound_expression_node_t * expression_node){ 
+    if(expression_node->closed) printf(" ( ");
     generate(expression_node->left);
-    printf("%s", ops[expression_node->operator]);
+    printf(" %s ", ops[expression_node->operator]);
     generate(expression_node->right);
-   
+    if(expression_node->closed) printf(" ) ");
 }
 
 void generate_function_call(func_call_node_t * fun_call){
