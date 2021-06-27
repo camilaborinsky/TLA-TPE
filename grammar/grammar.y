@@ -25,11 +25,11 @@
 
 %token<string> ID
 %token<type> INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE
-%token IF WHILE FUNCTION LET LE GE EQ NE NOT START RETURN
+%token IF WHILE FUNCTION LET LE GE EQ NE NOT START RETURN END
 %token<integer> OR AND
 %token<value> vTEXT vINT vDOUBLE TRUE FALSE 
 %type <integer> OPERATOR CONDITIONAL_OPERATOR
-%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM COND EXPRESSION VALUE
+%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM COND EXPRESSION VALUE RET
 %type<rnode> S
 %type<type> T
 %parse-param {root_node_t * root}
@@ -45,7 +45,7 @@
 
 %%
 
-PROGRAM   : START  S  RETURN 
+PROGRAM   : START  S  END 
           | S {return 0;}
 
 S         : DECL S  {root->global_variables = concat_node(root->global_variables,$1);}
@@ -60,7 +60,7 @@ MAIN_CODE : CTL MAIN_CODE {$$ = concat_node($2,$1); }
           | {$$ = 0;}
           ;
 
-FUNC  : FUNCTION ID ':' T '(' PARAM_DECL_LIST ')' '{' CODE '}' {$$ = new_function_node($2, $4, $6, $9);}
+FUNC  : FUNCTION ID ':' T '(' PARAM_DECL_LIST ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$ = new_function_node($2, $4, $6, $10);}
 
 PARAM_DECL_LIST : PARAM_DECL {$$ = $1;}
                 | {$$ = 0;}
@@ -71,12 +71,16 @@ PARAM_DECL : ID ':' T { $$ = new_param_decl_node($1,$3);}
            | PARAM_DECL ',' PARAM_DECL {$$ = concat_lists($1,$3);}
            ;
 
-CODE      : CTL CODE { $$ = concat_node($2,$1); }
+CODE      : CTL CODE  {$$ = concat_node($2,$1); }
           | LOOP CODE {$$ = concat_node($2,$1); }
           | SMP CODE  {$$ = concat_node($2,$1); }
           | DECL CODE {$$ = concat_node($2,$1); }
+          | CODE RET  {$$ = concat_node($1,$2); }
           | {$$ = 0;}
           ;
+
+RET       : RETURN EXPRESSION ';' {$$ = new_return_node($2);}
+          | RETURN ';' {$$ = new_return_node(0);}
 
 SMP      : ASSIGN {$$ = $1;} 
          | CALL   {$$ = $1;}
@@ -97,9 +101,9 @@ DECL     : LET ID ':' T ';' {$$ = new_declaration_node($2, $4);}
          ;
 
 
-LOOP    : WHILE '(' COND ')' '{' CODE '}' {$$ = new_loop_node($3,$6);}
+LOOP    : WHILE '(' COND ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$ = new_loop_node($3,$7);}
           ;
-CTL     : IF '(' COND ')' '{' CODE '}' {$$= new_if_node($3, $6);}
+CTL     : IF '(' COND ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$= new_if_node($3, $7);}
         ;
 
 
@@ -124,7 +128,7 @@ EXPRESSION :
 VALUE :
           vTEXT {$$ = new_string_node($1);}
         | vINT {$$ = new_int_node($1);}
-        | vDOUBLE {$$= new_double_node($1);}
+        | vDOUBLE {$$ = new_double_node($1);}
         ;
 
 OPERATOR  : '+' {$$ = ADD;}

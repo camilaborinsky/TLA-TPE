@@ -35,8 +35,8 @@ declaration_node_t * new_declaration_node(char * var_name,var_type type){
 assign_node_t* new_assign_node(char * variable_name, expression_node_t*  expression){ //TODO: ver tema de que tipo es este expression node
     variable * var = lookup(variable_name);
     if(var == NULL){
-        fprintf(stderr, "Referencia a variable inexistente.\n");
-        return NULL;
+        fprintf(stderr, "Referencia a variable inexistente %s.\n", variable_name);
+        exit(1);
     }else if(var->type != expression->expression_type){
         fprintf(stderr, "Incompatibilidad de tipos en asignación.\n");
         return NULL;
@@ -181,9 +181,7 @@ function_node_t * new_function_node( char * name, var_type type, list_node_t * p
     func->return_type = type;
     if(insert((variable*) func) < 0){
         fprintf(stderr, "Ya existe una función definida con ese nombre.\n");
-        free(name);
-        free(func);
-        return NULL;
+        exit(1);
     }
     int param_qty = 0;
     list_node_t * aux = params;
@@ -209,8 +207,7 @@ func_call_node_t * new_function_call_node(char * name, list_node_t * params){
     function * function = lookup(name);
     if(function == NULL){
         fprintf(stderr, "No existe función definida con ese nombre.\n");
-        free(name);
-        return NULL;
+        exit(1);
 
     }
     func_call_node_t * func_call_node = calloc(1,sizeof(func_call_node_t));
@@ -243,8 +240,13 @@ func_call_node_t * new_function_call_node(char * name, list_node_t * params){
 }
 
 
+return_node_t * new_return_node(expression_node_t * expression_node){
+    return_node_t * ret_node = calloc(1, sizeof(return_node_t));
+    ret_node->type = RETURN_N;
+    ret_node->expression = expression_node;
+    return ret_node;
+}
 
-//eSTO ESTA MAL
 list_node_t * new_param_node(expression_node_t * expression_node){
     list_node_t * params = calloc(1, sizeof(list_node_t));
     params->node->type = EXPRESSION_N;

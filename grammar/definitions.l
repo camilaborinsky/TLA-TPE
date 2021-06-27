@@ -45,10 +45,12 @@ text \"[^\"]*\"
 "or"            {return OR;}
 "and"           {return AND;}
 "not"           {return NOT;}
-"mischief managed" {return RETURN;}
+"mischief managed" {return END;}
 
 "true"          {yylval.value.bool_val = 1; return TRUE;}
 "false"         {yylval.value.bool_val = 0; return FALSE;}
+
+"return"        {return RETURN;}
 
 
 {name}          {yylval.string = strdup(yytext); return ID;}

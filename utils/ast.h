@@ -14,6 +14,7 @@ typedef enum node_type{
     VARIABLE_REF_N,
     EXPRESSION_N,
     CONDITION_N,
+    RETURN_N,
 }node_type;
 
 typedef struct if_node_t{
@@ -103,6 +104,11 @@ typedef struct func_call_node_t{
     list_node_t * params;
 }func_call_node_t;
 
+typedef struct return_node_t{
+    node_type type;
+    expression_node_t * expression;
+}return_node_t;
+
 
 
 //CREATE
@@ -127,6 +133,7 @@ list_node_t * new_param_decl_node(char * name, var_type type);
 list_node_t * new_param_node(expression_node_t * expression_node);
 function_node_t * new_function_node( char * name, var_type type, list_node_t * params, list_node_t * code);
 func_call_node_t * new_function_call_node(char * name, list_node_t * params);
+return_node_t * new_return_node(expression_node_t * expression);
 
 const_node_t * new_double_node(variable_value value);
 const_node_t * new_int_node(variable_value value);
