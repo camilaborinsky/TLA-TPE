@@ -2,7 +2,7 @@
 #define TYPES_H
 
 
-typedef enum var_type{tINT=0, tDOUBLE, tBOOL, tTEXT, tRECTANGLE, tLINE, tCIRCLE, tDOT}var_type;
+typedef enum var_type{tINT=0, tDOUBLE, tBOOL, tTEXT, tRECTANGLE, tLINE, tCIRCLE, tDOT, tFIGURE, tVOID}var_type;
 
 typedef enum operators{ADD = 0, SUB, MUL, DIV, LESS, GREATER, LESSEQ, GREATEQ,EQUALS,NEQ, oNOT, oAND, oOR} operators;
 

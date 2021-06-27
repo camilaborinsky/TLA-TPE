@@ -1,22 +1,13 @@
-
-
-
 #include<stdlib.h>
 #include<stdio.h>
 #include<strings.h>
+#include"lib/figures.h"
+#include"lib/handlers.h"
 
-int num;
-double multiplicar(){
-double result;
-result = 5.300000;
-return ;
-}
+rectangle * myRect;
 int main(){
-num = 4+9-8;
-multiplicar();
-if( num >3){
-num = 1;
-}
+myRect = rect_init(1010105);
+draw( myRect );
 return 0;
 }
 

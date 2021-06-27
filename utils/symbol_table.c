@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #define THRESHOLD 0.75
 #define BLOCK_SIZE 64
@@ -21,11 +22,46 @@ node_t **hash_table;
 unsigned int size;
 unsigned int num_blocks;
 
+void insert_function(var_type return_type, char *name, int qty, ...) {
+    va_list types;
+    function *function = calloc(1, sizeof(function));
+    function->name = name;
+    function->param_qty = qty;
+    function->return_type = return_type;
+    if (qty > 0) {
+        param_type_node *param;
+        param_type_node *aux;
+
+        va_start(types, qty);
+        for (int i = 0; i < qty; i++) {
+            aux = param;
+            param = calloc(1, sizeof(param_type_node));
+            param->type = va_arg(types, var_type);
+            param->next = aux;
+        }
+        function->first = param;
+        va_end(types);
+    }
+    insert((variable *)function);
+}
+
+void insert_lib_functions() {
+    insert_function(tRECTANGLE, "rect_init", 4, tINT, tINT, tINT, tINT);
+    insert_function(tCIRCLE, "circ_init", 3, tINT, tINT, tINT);
+    insert_function(tLINE, "line_init", 4, tINT, tINT, tINT, tINT);
+    insert_function(tDOT, "dot_init", 2, tINT, tINT);
+    insert_function(tFIGURE, "join", 4, tINT, tINT, tFIGURE, tFIGURE);
+    insert_function(tVOID, "draw", 1, tFIGURE);
+    insert_function(tVOID, "move", 2, tINT, tINT);
+    insert_function(tVOID, "DESTROY", 1, tFIGURE);
+}
+
 void init_table() {
     current_scope = 0;
     size = 0;
     num_blocks = 1;
     hash_table = calloc(BLOCK_SIZE, sizeof(node_t *));
+    insert_lib_functions();
 }
 
 unsigned long long hash(char *name) {
@@ -57,7 +93,7 @@ int insert(variable *var) {
         if (node->scope == current_scope) {
             printf("Multiple declaration of variable %s", var->name);
             return MULTIPLE_DECLARATION;
-        } else {          
+        } else {
             node = (node_t *)malloc(sizeof(node_t));
             node->var = var;
             node->scope = current_scope;
@@ -80,10 +116,10 @@ void expand_table() {
 }
 
 variable *lookup(char *name) {
-    variable * aux;
-    for(int scope = current_scope; scope >= 0; scope--){
-        aux = lookup_in_scope(name,scope);
-        if(aux != NULL) return aux;
+    variable *aux;
+    for (int scope = current_scope; scope >= 0; scope--) {
+        aux = lookup_in_scope(name, scope);
+        if (aux != NULL) return aux;
     }
     return NULL;
 }
@@ -113,7 +149,7 @@ void prev_scope() {
             while (node != NULL && node->scope == current_scope) {
                 prev = node;
                 node = node->next;
-                free(prev); 
+                free(prev);
             }
             hash_table[i] = node;
         }

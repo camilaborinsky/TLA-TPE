@@ -1,13 +1,5 @@
-function multiplicar:double(){
-    let result:double;
-    result=5.3;
-    return;
-}
 
-let num:int;
-num=4 + 9 - 8;
-multiplicar();
 
-if(num > 3){
-    num = 1;
-}
+let myRect:rectangle;
+myRect = rect_init(10,10, 10, 5);
+draw(myRect);

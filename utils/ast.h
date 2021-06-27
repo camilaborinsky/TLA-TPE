@@ -91,8 +91,10 @@ typedef struct const_node_t{
 
 typedef struct func_call_node_t{
     node_type type;
+    var_type ret_type;
     char * name;
     list_node_t * params;
+    int terminal;
 }func_call_node_t;
 
 typedef struct return_node_t{
@@ -130,6 +132,7 @@ const_node_t * new_int_node(variable_value value);
 const_node_t * new_string_node(variable_value value);
 const_node_t * new_true_node();
 const_node_t * new_false_node();
+void set_terminal(func_call_node_t * fun_call);
 
 //FREE
 

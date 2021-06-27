@@ -31,7 +31,7 @@ void (*generators[])(ast_node_t * node) = {
 
 };
 
-char * types[] = {"int", "double" ,"bool", "char *" , "rectangle *", "line *", "circle *", "dot *"};
+char * types[] = {"int", "double" ,"bool", "char *" , "rectangle *", "line *", "circle *", "dot *", "figure *", "void"};
 char * ops[] = {"+","-","*","/","<",">","<=",">=","==","!=","!"};
 
 void generate_list(list_node_t * list);
@@ -63,7 +63,13 @@ void generate_list(list_node_t * list){
 
 
 void generate_initial_setup(){
-    printf("\n\n\n#include<stdlib.h>\n#include<stdio.h>\n#include<strings.h>\n\n");
+    printf(
+            "#include<stdlib.h>\n"\
+            "#include<stdio.h>\n"\
+            "#include<strings.h>\n"\
+            "#include\"lib/figures.h\"\n"\
+            "#include\"lib/handlers.h\"\n"\
+            "\n");
 }
 
 void generate_type_code(var_type type){
@@ -118,7 +124,8 @@ void generate_expression_code(compound_expression_node_t * expression_node){
 void generate_function_call(func_call_node_t * fun_call){
     printf("%s(", fun_call->name);
     generate_list(fun_call->params);
-    printf(");\n");
+    printf(")");
+    if(fun_call->terminal) printf(";\n");
     //free(fun_call->name);
     //free(fun_call);
 }

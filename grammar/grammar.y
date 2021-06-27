@@ -24,14 +24,14 @@
 }
 
 %token<string> ID
-%token<type> INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE
+%token<type> INT DOUBLE BOOL RECTANGLE CIRCLE DOT TEXT LINE FIGURE VOID
 %token IF WHILE FUNCTION LET LE GE EQ NE NOT START RETURN END
 %token<integer> OR AND
 %token<value> vTEXT vINT vDOUBLE TRUE FALSE 
-%type <integer> OPERATOR CONDITIONAL_OPERATOR
-%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM COND EXPRESSION VALUE RET
+%type <integer> OPERATOR
+%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM EXPRESSION VALUE RET
 %type<rnode> S
-%type<type> T
+%type<type> T FUNC_T
 %parse-param {root_node_t * root}
 %right "="
 %left OR AND
@@ -60,7 +60,10 @@ MAIN_CODE : CTL MAIN_CODE {$$ = concat_node($2,$1); }
           | {$$ = 0;}
           ;
 
-FUNC  : FUNCTION ID ':' T '(' PARAM_DECL_LIST ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$ = new_function_node($2, $4, $6, $10);}
+FUNC  : FUNCTION ID ':' FUNC_T '(' PARAM_DECL_LIST ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$ = new_function_node($2, $4, $6, $10);}
+
+FUNC_T : T
+       | VOID 
 
 PARAM_DECL_LIST : PARAM_DECL {$$ = $1;}
                 | {$$ = 0;}
@@ -82,19 +85,19 @@ CODE      : CTL CODE  {$$ = concat_node($2,$1); }
 RET       : RETURN EXPRESSION ';' {$$ = new_return_node($2);}
           | RETURN ';' {$$ = new_return_node(0);}
 
-SMP      : ASSIGN {$$ = $1;} 
-         | CALL   {$$ = $1;}
+SMP      : ASSIGN ';' {$$ = $1;} 
+         | CALL  ';' { set_terminal($1); $$ = $1;}
          ;
 
-CALL    : ID '(' PARAM_LIST ')' ';' {$$ = new_function_call_node($1, $3);}
+CALL    : ID '(' PARAM_LIST ')' {$$ = new_function_call_node($1, $3);}
         ;
 
 PARAM_LIST : PARAM {$$ = $1;}
-                | {$$ = 0;}
+                |  {$$ = 0;}
                 ; 
 
-PARAM : EXPRESSION { $$ = new_param_node($1);}
-      | PARAM ',' PARAM {$$ = concat_lists($1,$3);}
+PARAM : EXPRESSION {$$ = new_param_node($1);}
+      |  EXPRESSION',' PARAM  {$$ = concat_node($3,$1);}
 
 
 DECL     : LET ID ':' T ';' {$$ = new_declaration_node($2, $4);}
@@ -115,7 +118,7 @@ CTL     : IF '(' EXPRESSION ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$
           | FALSE {$$ = new_false_node();}
           ; */
 
-ASSIGN  : ID '=' EXPRESSION ';' {$$= new_assign_node($1, $3);}
+ASSIGN  : ID '=' EXPRESSION {$$= new_assign_node($1, $3);}
 
    
 EXPRESSION :            
@@ -123,13 +126,15 @@ EXPRESSION :
           | NOT EXPRESSION {$$ = not_expression_node($2);}
           | ID  {$$ = new_var_node($1);}
           | VALUE {  $$ = $1; }
-          | CALL {  $$ = $1 ;}
+          | CALL {$$ = $1;}
           ;   
 
 VALUE :
           vTEXT {$$ = new_string_node($1);}
         | vINT {$$ = new_int_node($1);}
         | vDOUBLE {$$ = new_double_node($1);}
+        | TRUE {$$ = new_true_node();}
+        | FALSE {$$ = new_false_node();}
         ;
 
 OPERATOR  : '+' {$$ = ADD;}
@@ -155,6 +160,7 @@ T         :
           | DOT
           | TEXT
           | LINE
+          | FIGURE
           ;
 %%
 
