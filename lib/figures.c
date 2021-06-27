@@ -175,6 +175,7 @@ join_figure *join(int x, int y, figure *f1, figure *f2) {
 
 void draw(figure *fig) {
     fig->draw(fig);
+    refresh();
 }
 
 void destroy(figure *fig) {

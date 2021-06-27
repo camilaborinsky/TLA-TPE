@@ -47,8 +47,9 @@ void generate_code(root_node_t * tree){
     generate_list(tree->global_variables);
     generate_list(tree->functions);
     printf("int main(){\n");
+    printf("init();\n");
     generate_list(tree->main);
-    printf("return 0;\n}\n\n\n");
+    printf("loop();\nreturn 0;\n}\n\n\n");
 }
 
 void generate_list(list_node_t * list){
