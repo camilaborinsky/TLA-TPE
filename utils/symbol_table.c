@@ -54,6 +54,9 @@ void insert_lib_functions() {
     insert_function(tVOID, "draw", 1, tFIGURE);
     insert_function(tVOID, "move", 2, tINT, tINT);
     insert_function(tVOID, "DESTROY", 1, tFIGURE);
+    insert_function(tVOID, "set_interval", 2, tINT, tFUNCTION);
+    insert_function(tVOID, "on_key", 2,  tINT, tFUNCTION);
+    insert_function(tVOID, "loop", 0);
 }
 
 void init_table() {

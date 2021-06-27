@@ -60,7 +60,7 @@ MAIN_CODE : CTL MAIN_CODE {$$ = concat_node($2,$1); }
           | {$$ = 0;}
           ;
 
-FUNC  : FUNCTION ID ':' FUNC_T '(' PARAM_DECL_LIST ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$ = new_function_node($2, $4, $6, $10);}
+FUNC  : FUNCTION ID ':' FUNC_T '(' PARAM_DECL_LIST ')' {next_scope();} '{' CODE RET'}' {prev_scope();} {$$ = new_function_node($2, $4, $6, $10, $11);}
 
 FUNC_T : T
        | VOID 

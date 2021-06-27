@@ -166,7 +166,7 @@ list_node_t* new_param_decl_node(char* name, var_type type) {
     return params;
 }
 
-function_node_t* new_function_node(char* name, var_type type, list_node_t* params, list_node_t* code) {
+function_node_t* new_function_node(char* name, var_type type, list_node_t* params, list_node_t* code, return_node_t * return_node) {
     function* func = calloc(1, sizeof(function));
     func->name = name;
     func->return_type = type;

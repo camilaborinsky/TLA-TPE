@@ -119,7 +119,7 @@ variable_node_t* new_var_node(char * variable);
 const_node_t* new_const_node(variable_value value);
 list_node_t * new_param_decl_node(char * name, var_type type);
 list_node_t * new_param_node(expression_node_t * expression_node);
-function_node_t * new_function_node( char * name, var_type type, list_node_t * params, list_node_t * code);
+function_node_t * new_function_node( char * name, var_type type, list_node_t * params, list_node_t * code, return_node_t * return_node);
 func_call_node_t * new_function_call_node(char * name, list_node_t * params);
 return_node_t * new_return_node(expression_node_t * expression);
 
