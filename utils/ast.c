@@ -286,3 +286,7 @@ void set_closed(expression_node_t * expression){
     }
 }
 
+void set_easter_egg(root_node_t * root){
+    root->easter_egg = 1;
+}
+

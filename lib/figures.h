@@ -27,4 +27,6 @@ void destroy(figure * fig);
 extern int screen_width;
 extern int screen_height;
 
+void easter_egg();
+
 #endif

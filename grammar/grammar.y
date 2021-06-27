@@ -45,7 +45,7 @@
 
 %%
 
-PROGRAM   : START  S  END 
+PROGRAM   : START  S  END { set_easter_egg(root); return 0;}
           | S {return 0;}
 
 S         : DECL S  {root->global_variables = concat_node(root->global_variables,$1);}
@@ -171,6 +171,10 @@ int yywrap(){
 int main() {
     root_node_t * root = new_root_node();
     int ret= yyparse(root);
+    if(ret != 0){
+            fprintf(stderr,"error parsing...\n");
+            exit(1);
+    }
     
     //handle errors for ret values
 

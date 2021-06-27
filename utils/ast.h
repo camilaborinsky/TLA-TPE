@@ -36,6 +36,7 @@ typedef struct root_node_t{
     list_node_t* global_variables;
     list_node_t* functions;
     list_node_t* main;
+    int easter_egg;
 }root_node_t;
 
 typedef struct while_node_t{
@@ -132,6 +133,7 @@ const_node_t * new_true_node();
 const_node_t * new_false_node();
 void set_terminal(func_call_node_t * fun_call);
 void set_closed(expression_node_t * expr);
+void set_easter_egg(root_node_t * root);
 
 //FREE
 

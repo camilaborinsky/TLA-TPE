@@ -1,7 +1,9 @@
 #include "figures.h"
+#include "easter_egg.h"
 
 #include <math.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define pix -1
 
@@ -186,4 +188,16 @@ void destroy(figure *fig) {
         if (join_fig->f2 != NULL) free(join_fig->f2);
     } else
         free(fig);
+}
+
+
+
+void easter_egg(){
+    int n;
+    mvaddch(0,0,' ');
+    addstr(easter_egg_str);
+    refresh();
+    sleep(3);
+    clear();
+
 }

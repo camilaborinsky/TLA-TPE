@@ -12,6 +12,10 @@ name [a-zA-Z][a-zA-Z0-9_]*
 text \"[^\"]*\"
 
 %%
+
+"I solemnly swear that I am up to no good"  { return START;}
+"mischief managed" {return END;}
+
 [\n\t ]			;
 
 {integer}       {yylval.value.int_val=atoi(yytext); return vINT;}
@@ -23,7 +27,7 @@ text \"[^\"]*\"
 {comment}       ;
 
 
-"I solemnly swear that I am up to no good"  {return START;}
+
 "void"           {yylval.type = tVOID; return VOID;}
 "int"           {yylval.type = tINT; return INT;}
 "double"        {yylval.type = tDOUBLE; return DOUBLE;}
@@ -47,7 +51,7 @@ text \"[^\"]*\"
 "or"            {return OR;}
 "and"           {return AND;}
 "not"           {return NOT;}
-"mischief managed" {return END;}
+
 
 "true"          {yylval.value.bool_val = 1; return TRUE;}
 "false"         {yylval.value.bool_val = 0; return FALSE;}

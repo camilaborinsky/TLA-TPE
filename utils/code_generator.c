@@ -49,8 +49,12 @@ void generate_code(root_node_t * tree){
     printf("int main(){\n");
     printf("init();\n");
     generate_list(tree->main);
+    if(tree->easter_egg)
+        printf("easter_egg();\n");
     printf("loop();\nreturn 0;\n}\n\n\n");
 }
+
+
 
 void generate_list(list_node_t * list){
     list_node_t * prev;
