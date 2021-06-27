@@ -104,10 +104,6 @@ typedef struct return_node_t{
 
 
 
-//CREATE
-
-//void add_decl_node(list_node_t * global_variables, declaration_node_t * declaration_node);
-//void add_func_node(list_node_t * functions, function_node_t * function_node);
 list_node_t * concat_lists(list_node_t * list1, list_node_t * list2 );
 list_node_t * concat_node(list_node_t * list, ast_node_t * code );
 root_node_t * new_root_node();

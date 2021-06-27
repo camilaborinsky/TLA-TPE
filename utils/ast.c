@@ -242,22 +242,6 @@ list_node_t* new_param_node(expression_node_t* expression_node) {
     return params;
 }
 
-/* ADD NODE FUNCTIONS*/
-
-// void add_decl_node(list_node_t * global_variables, declaration_node_t * declaration_node){
-//     list_node_t * new_node = calloc(1, sizeof(list_node_t));
-//     new_node->node = declaration_node;
-//     new_node->next = global_variables;
-//     global_variables = new_node;
-// }
-
-// void add_func_node(list_node_t * functions, function_node_t * function_node){
-//     list_node_t * new_node = calloc(1, sizeof(list_node_t));
-//     new_node->node = function_node;
-//     new_node->next = functions;
-//     functions = new_node;
-
-// }
 
 list_node_t* concat_node(list_node_t* list, ast_node_t* code) {
     list_node_t* new_node = calloc(1, sizeof(list_node_t));
@@ -284,3 +268,4 @@ list_node_t* concat_lists(list_node_t* main, list_node_t* instructions) {
 void set_terminal(func_call_node_t * fun_call){
     fun_call->terminal = 1;
 }
+
