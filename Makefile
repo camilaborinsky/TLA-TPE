@@ -1,5 +1,5 @@
-PARSER_SOURCES =utils/ast.c utils/symbol_table.c utils/code_generator.c
-PARSER_HEADERS = utils/types.h utils/symbol_table.h utils/code_generator.h
+PARSER_SOURCES =utils/ast.c utils/symbol_table.c utils/code_generator.c utils/errors.c
+PARSER_HEADERS = utils/types.h utils/symbol_table.h utils/code_generator.h utils/errors.h
 TO = compile
 FROM=test.td
 
@@ -11,7 +11,7 @@ parser: grammar/grammar.y grammar/definitions.l $(PARSER_SOURCES) $(PARSER_HEADE
 	gcc -o parser lex.yy.c y.tab.c $(PARSER_SOURCES) -g -Wno-implicit-int -Wno-incompatible-pointer-types   -ly
 
 compile:
-	./parser < $(FROM) > $(TO).c && $(CC) $(TO).c lib/figures.c lib/handlers.c -o $(TO) -lncurses -lm
+	./parser < $(FROM) > $(TO).c && $(CC) $(TO).c lib/figures.c lib/handlers.c -o $(TO) -w -lncurses -lm
 
 clean:
 	rm -rf demo lex.yy.c y.tab.c y.tab.h parser

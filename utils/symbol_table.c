@@ -51,11 +51,12 @@ void insert_lib_functions() {
     insert_function(tDOT, "dot_init", 2, tINT, tINT);
     insert_function(tFIGURE, "join", 2 , tFIGURE, tFIGURE);
     insert_function(tVOID, "draw", 1, tFIGURE);
-    insert_function(tVOID, "move", 2, tINT, tINT);
+    insert_function(tVOID, "move_figure", 3, tFIGURE,tINT, tINT);
     insert_function(tVOID, "DESTROY", 1, tFIGURE);
     insert_function(tVOID, "set_interval", 2, tINT, tFUNCTION); // estan todas al reves por alguna razon
     insert_function(tVOID, "on_key", 2,  tINT, tFUNCTION);
     insert_function(tVOID, "loop", 0);
+    insert_function(tVOID, "clear", 0);
 }
 
 void init_table() {

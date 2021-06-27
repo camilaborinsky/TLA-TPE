@@ -6,12 +6,11 @@
         #include "utils/code_generator.h"
         #include "utils/ast.h"
         extern int yylineno;
+        int yylex();
+        void yyerror(root_node_t * root, const char * msg);
 }
 
-%{
-        int yylex();
-        void yyerror();
-%}
+%define parse.error verbose
 
 %union{
   char * string;
@@ -79,6 +78,7 @@ CODE      : CTL CODE  {$$ = concat_node($2,$1); }
           | LOOP CODE {$$ = concat_node($2,$1); }
           | SMP CODE  {$$ = concat_node($2,$1); }
           | DECL CODE {$$ = concat_node($2,$1); }
+          | DECL_ASSIGN';' CODE {$$ = concat_node($3,$1);} 
           | {$$ = 0;}
           ;
 
@@ -86,7 +86,6 @@ RET       : RETURN EXPRESSION ';' {$$ = new_return_node($2);}
           | RETURN ';' {$$ = new_return_node(0);}
 
 SMP      : ASSIGN ';' {$$ = $1;} 
-         | DECL_ASSIGN ';' {$$ = $1;} 
          | CALL  ';' { set_terminal($1); $$ = $1;}
          ;
 
@@ -173,8 +172,9 @@ int yywrap(){
         return 1;
 } 
 
-void yyerror(char * type, char* msg){
-        fprintf(stderr, "%s : %s en la linea %d\n", type, msg, yylineno);
+void yyerror(root_node_t * root, const char* msg){
+        
+        fprintf(stderr, "%s in line %d\n", msg, yylineno);
         exit(1);
 }
 

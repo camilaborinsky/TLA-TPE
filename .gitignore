@@ -56,6 +56,6 @@ parser
 y.tab.c
 y.tab.h
 compile
-#compile.c
+compile.c
 lex.yy.c
 .vscode

@@ -4,7 +4,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "errors.h"
 #include "symbol_table.h"
+
+extern int yylineno;
+
+
+int check_compatibility(var_type t1, var_type t2) {
+    if (t1==tFUNCTION && t2 == tVOID) return 1;
+    if (t1 == tDOUBLE && t2 == tINT) return 1;
+    if (t1 == tFIGURE && (
+        t2 == tRECTANGLE ||
+        t2 == tCIRCLE ||
+        t2 == tLINE ||
+        t2 == tDOT)) return 1;
+
+    return t1 == t2;
+}
+
 
 root_node_t* new_root_node() {
     root_node_t* node = calloc(1, sizeof(root_node_t));
@@ -20,7 +37,7 @@ declaration_node_t* new_declaration_node(char* var_name, var_type type) {
     var->type = type;
 
     if (insert(var) < 0) {
-        fprintf(stderr, "Ya existe una variable definida con ese nombre\n");
+        multiple_declaration(var_name, yylineno, 1);
         exit(1);
     }
 
@@ -31,28 +48,15 @@ declaration_node_t* new_declaration_node(char* var_name, var_type type) {
     return new_node;
 }
 
-int check_compatibility(var_type t1, var_type t2) {
-    if (t1==tFUNCTION && t2 == tVOID) return 1;
-    if (t1 == tDOUBLE && t2 == tINT) return 1;
-    if (t1 == tFIGURE && (
-        t2 == tRECTANGLE ||
-        t2 == tCIRCLE ||
-        t2 == tLINE ||
-        t2 == tDOT)) return 1;
-
-    return t1 == t2;
-}
-
 assign_node_t* new_assign_node(char* variable_name, expression_node_t* expression) {  //TODO: ver tema de que tipo es este expression node
     variable* var = lookup(variable_name);
     if (var == NULL) {
-        fprintf(stderr, "Referencia a variable inexistente %s.\n", variable_name);
+        undefined_reference(variable_name, yylineno);
         exit(1);
     } else if (!check_compatibility(var->type, expression->expression_type)) {
-        fprintf(stderr, "Incompatibilidad de tipos en asignación.\n");
-        return NULL;
+        incompatible_types(var->type, expression->expression_type, yylineno);
+        exit(1);
     }
-
     assign_node_t* new_node = calloc(1, sizeof(assign_node_t));
     new_node->type = ASSIGN_N;
     new_node->var = var;
@@ -79,7 +83,7 @@ while_node_t* new_loop_node(expression_node_t* expression, list_node_t* code) {
 variable_node_t* new_var_node(char* variable_name) {
     variable* var = lookup(variable_name);
     if (var == NULL) {
-        fprintf(stderr, "Referencia a variable inexistente %s.\n", variable_name);
+       undefined_reference(variable_name, yylineno);
         exit(1);
     }
     variable_node_t* var_node = calloc(1, sizeof(variable_node_t));
@@ -98,12 +102,12 @@ expression_node_t* not_expression_node(expression_node_t* right) {
 }
 
 expression_node_t* new_compose_expr_node(expression_node_t* left, char operator, expression_node_t * right) {
-    if (left->expression_type != right->expression_type) {
-        fprintf(stderr, "Incompatibilidad de tipos en la expresión.\n");
+    if (!check_compatibility(left->expression_type, right->expression_type)){
+        incompatible_types_operation(left->expression_type, right->expression_type, operator, yylineno);
         exit(1);
     }
     if (left->expression_type > tDOUBLE) {
-        fprintf(stderr, "Operación \'%c\' no permitida para el tipo solicitado.\n", operator);
+        illegal_operation(left->expression_type, operator, yylineno);
         exit(1);
     }
     compound_expression_node_t* expression_node = calloc(1, sizeof(compound_expression_node_t));
@@ -171,8 +175,13 @@ list_node_t* new_param_decl_node(char* name, var_type type) {
 
 function_node_t* new_function_node(char* name, var_type type, list_node_t* params, list_node_t* code, return_node_t * return_node) {
     
-    if( (return_node->expression == NULL && type != tVOID) || (return_node->expression != NULL && return_node->expression->expression_type != type)){
-        fprintf(stderr,"Valor de retorno incompatible con la función\n");
+    if (return_node->expression == NULL && type != tVOID){
+        incompatible_return_type(type, tVOID, name, yylineno);
+        exit(1);
+    }
+
+    if(return_node->expression != NULL && return_node->expression->expression_type != type){
+        incompatible_return_type(type, return_node->expression->expression_type, name, yylineno);
         exit(1);
     }
     
@@ -180,7 +189,7 @@ function_node_t* new_function_node(char* name, var_type type, list_node_t* param
     func->name = name;
     func->return_type = type;
     if (insert((variable*)func) < 0) {
-        fprintf(stderr, "Ya existe una función definida con ese nombre.\n");
+        multiple_declaration(name, 0, yylineno);
         exit(1);
     }
     int param_qty = 0;
@@ -210,28 +219,30 @@ function_node_t* new_function_node(char* name, var_type type, list_node_t* param
 func_call_node_t* new_function_call_node(char* name, list_node_t* params) {
     function* function = lookup(name);
     if (function == NULL) {
-        fprintf(stderr, "No existe función definida con ese nombre.\n");
+        undefined_reference(name,yylineno );
         exit(1);
     }
     func_call_node_t* func_call_node = calloc(1, sizeof(func_call_node_t));
     func_call_node->type = FUNCALL_N;
     list_node_t* aux = params;
+    int param_count=0;
     param_type_node* aux_type = function->first;
     while (aux != NULL) {
         if (aux_type == NULL) {
-            fprintf(stderr, "Incompatibilidad en la cantidad de parámetros de la llamada a la función '%s' y su declaración.\n", name);
+            incompatible_parameter_count(param_count, function->param_qty, function->name, yylineno);
             exit(1);
         }
         if (!check_compatibility(aux_type->type, ((expression_node_t*)aux->node)->expression_type)) {
-            fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\' y su declaración.\n", name);
+            incompatible_types_function(aux_type->type, ((expression_node_t*)aux->node)->expression_type, function->name, yylineno);
             exit(1);
         } else {
+            param_count ++;
             aux = aux->next;
             aux_type = aux_type->next;
         }
     }
     if (aux_type == NULL && aux != NULL) {
-        fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\' y su declaración.\n", name);
+        incompatible_parameter_count(param_count, function->param_qty, function->name, yylineno);
         exit(1);
         //ERROR: PARAMETROS DE MAS EN LA LLAMADA A LA FUNCION
     }
@@ -332,7 +343,7 @@ decl_assign_node_t * new_assign_decl_node(char * name, var_type type, expression
     strcpy(var->name, name);
     var->type = type;
     if (insert(var) < 0) {
-        fprintf(stderr, "Ya existe una variable definida con ese nombre\n");
+        multiple_declaration(name,1,  yylineno);
         exit(1);
     }
     decl_assign_node_t * node = calloc(1,sizeof(decl_assign_node_t));
