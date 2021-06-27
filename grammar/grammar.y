@@ -158,7 +158,6 @@ int yywrap(){
 } 
 
 int main() {
-    printf("Enter the expression:\n");
     root_node_t * root = new_root_node();
     int ret= yyparse(root);
     

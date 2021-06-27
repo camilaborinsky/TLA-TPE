@@ -26,7 +26,6 @@ void init_table(){
     size = 0;
     num_blocks =1;
     hash_table = calloc(BLOCK_SIZE,sizeof(node_t *));
-    fprintf(stderr,"symbol table init\n");
 }
 
 unsigned long long hash(char * name)

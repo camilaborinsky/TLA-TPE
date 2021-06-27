@@ -14,9 +14,9 @@ text \"[^\"]*\"
 %%
 [\n\t ]			;
 
-{integer}       {yylval.integer=atoi(yytext); return vINT;}
-{float}     	{yylval.decimal=strtof(yytext,0); return vDOUBLE;}
-{text}     	    {yylval.string=strdup(yytext); return vTEXT;}
+{integer}       {yylval.value.int_val=atoi(yytext); return vINT;}
+{float}     	{yylval.value.double_val=strtof(yytext,0); return vDOUBLE;}
+{text}     	    {yylval.value.text_val=strdup(yytext); return vTEXT;}
 
 [ \t]+          ;
 

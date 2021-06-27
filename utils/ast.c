@@ -282,14 +282,14 @@ list_node_t * concat_node(list_node_t * list, ast_node_t * code ){
 }
 
 list_node_t * concat_lists(list_node_t * main, list_node_t * instructions){
-    //list_node_t * aux = main;
+    list_node_t * aux = instructions;
     //  if(aux == NULL)
     //     aux = instructions;
     //else{
-        // while(aux->next != NULL ) aux = aux->next;
+    while(aux->next != NULL ) aux = aux->next;
         // aux->next = instructions;
-    while(instructions->next != NULL ) instructions = instructions->next;
-    instructions->next = main;
+    
+    aux->next = main;
     //}
     
    
