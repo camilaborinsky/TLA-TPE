@@ -8,7 +8,7 @@
 integer -?[0-9]+
 float   {integer}(\.{integer}+)?
 comment \/\/.*
-name [a-zA-Z_]+ 
+name [a-zA-Z][a-zA-Z0-9_]* 
 text \"[^\"]*\"
 
 %%
@@ -33,7 +33,7 @@ text \"[^\"]*\"
 "dot"           {yylval.type = tDOT; return DOT;}
 "text"          {yylval.type = tTEXT; return TEXT;}
 "line"          {yylval.type = tLINE; return LINE;}
-"figure"          {yylval.type = tFIGURE; return FIGURE;}
+"figure"        {yylval.type = tFIGURE; return FIGURE;}
 
 "if"            {return IF;}
 "while"         {return WHILE;}

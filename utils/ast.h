@@ -48,6 +48,7 @@ typedef struct while_node_t{
 typedef struct declaration_node_t{
     node_type type;
     variable * var;
+    int terminal;
     
 }declaration_node_t;
 

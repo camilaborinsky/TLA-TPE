@@ -60,7 +60,7 @@ MAIN_CODE : CTL MAIN_CODE {$$ = concat_node($2,$1); }
           | {$$ = 0;}
           ;
 
-FUNC  : FUNCTION ID ':' FUNC_T '(' PARAM_DECL_LIST ')' {next_scope();} '{' CODE RET'}' {prev_scope();} {$$ = new_function_node($2, $4, $6, $10, $11);}
+FUNC  : FUNCTION ID ':' FUNC_T '(' PARAM_DECL_LIST ')' {next_scope();} '{' CODE RET '}' {prev_scope();} {$$ = new_function_node($2, $4, $6, $10, $11);}
 
 FUNC_T : T
        | VOID 
@@ -71,14 +71,13 @@ PARAM_DECL_LIST : PARAM_DECL {$$ = $1;}
 
 
 PARAM_DECL : ID ':' T { $$ = new_param_decl_node($1,$3);}
-           | PARAM_DECL ',' PARAM_DECL {$$ = concat_lists($1,$3);}
+           | PARAM_DECL ',' PARAM_DECL {$$ = concat_lists($3,$1);}
            ;
 
 CODE      : CTL CODE  {$$ = concat_node($2,$1); }
           | LOOP CODE {$$ = concat_node($2,$1); }
           | SMP CODE  {$$ = concat_node($2,$1); }
           | DECL CODE {$$ = concat_node($2,$1); }
-          | CODE RET  {$$ = concat_node($1,$2); }
           | {$$ = 0;}
           ;
 

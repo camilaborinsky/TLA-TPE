@@ -27,6 +27,7 @@ declaration_node_t* new_declaration_node(char* var_name, var_type type) {
     declaration_node_t* new_node = calloc(1, sizeof(declaration_node_t));
     new_node->type = DECLARATION_N;
     new_node->var = var;
+    new_node->terminal = 1;
     return new_node;
 }
 
@@ -162,11 +163,18 @@ const_node_t* new_string_node(variable_value value) {
 list_node_t* new_param_decl_node(char* name, var_type type) {
     list_node_t* params = calloc(1, sizeof(list_node_t));
     declaration_node_t* decl_node = new_declaration_node(name, type);
+    decl_node->terminal = 0;
     params->node = decl_node;
     return params;
 }
 
 function_node_t* new_function_node(char* name, var_type type, list_node_t* params, list_node_t* code, return_node_t * return_node) {
+    
+    if(return_node->expression->expression_type != type){
+        fprintf(stderr,"Valor de retorno incompatible con la función\n");
+        exit(1);
+    }
+    
     function* func = calloc(1, sizeof(function));
     func->name = name;
     func->return_type = type;
@@ -189,6 +197,9 @@ function_node_t* new_function_node(char* name, var_type type, list_node_t* param
     function_node_t* func_node = calloc(1, sizeof(function_node_t));
     func_node->type = FUNDECL_N;
     func_node->function = func;
+    list_node_t * return_code_list = calloc(1,sizeof(list_node_t));
+    return_code_list->node = return_node;
+    code = concat_lists(return_code_list,code);
     func_node->code = code;
     func_node->parameters = params;
 }

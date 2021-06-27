@@ -105,7 +105,8 @@ void generate_loop_code(while_node_t * loop_node){
 
 void generate_declaration_code(declaration_node_t * declaration_node){
     generate_type_code(declaration_node->var->type);
-    printf(" %s;\n", declaration_node->var->name);
+    printf(" %s ", declaration_node->var->name);
+    if(declaration_node->terminal) printf(";\n");
 }
 
 void generate_assign_code(assign_node_t * assign_node){
@@ -131,7 +132,7 @@ void generate_function_call(func_call_node_t * fun_call){
 void generate_function_declaration(function_node_t * node){
     generate_type_code(node->function->return_type);
     printf(" %s(", node->function->name);
-    generate_list(node->parameters);
+    generate_params_list(node->parameters);
     printf("){\n");
     generate_list(node->code);
     printf("}\n");
