@@ -19,9 +19,7 @@ declaration_node_t * new_declaration_node(char * var_name,var_type type){
 
     if(insert( var ) < 0 ){
          fprintf(stderr, "Ya existe una variable definida con ese nombre\n");
-         free(var->name);
-         free(var);
-         return NULL;
+         exit(1);
     }
     
 
@@ -52,18 +50,18 @@ assign_node_t* new_assign_node(char * variable_name, expression_node_t*  express
 
 
 
-if_node_t* new_if_node(condition_node_t * condition,list_node_t*  code){
+if_node_t* new_if_node(expression_node_t * expression,list_node_t*  code){
     if_node_t * if_node = calloc(1, sizeof(if_node_t));
     if_node->type = CTL_N;
-    if_node->condition = condition;
+    if_node->condition = expression;
     if_node->then = code;
     return if_node;
 }
 
-while_node_t* new_loop_node(condition_node_t * condition,list_node_t*  code){
+while_node_t* new_loop_node(expression_node_t * expression,list_node_t*  code){
     while_node_t * loop_node = calloc(1, sizeof(while_node_t));
     loop_node->type = LOOP_N;
-    loop_node->condition = condition;
+    loop_node->condition = expression;
     loop_node->routine = code;
     return loop_node;
 }
@@ -73,7 +71,7 @@ variable_node_t* new_var_node(char * variable_name){
     variable * var = lookup(variable_name);
     if(var == NULL){
         fprintf(stderr, "Referencia a variable inexistente.\n");
-        return NULL;
+        exit(1);
     }
     variable_node_t * var_node = calloc(1, sizeof(variable_node_t));
     var_node->type = VARIABLE_REF_N;
@@ -83,32 +81,25 @@ variable_node_t* new_var_node(char * variable_name){
 }
 
 
-condition_node_t* new_compose_cond_node(condition_node_t * left, char  operator,condition_node_t * right){
-    condition_node_t * condition_node = calloc(1, sizeof(condition_node_t));
-    condition_node->type = CONDITION_N;
-    condition_node->left = left;
-    condition_node->right = right;
-    condition_node->operator = operator;
-    return condition_node;
-}
 
-condition_node_t * not_cond(condition_node_t * right){
-    condition_node_t * condition_node = calloc(1, sizeof(condition_node_t));
-    condition_node->type = CONDITION_N;
-    condition_node->right = right;
-    condition_node->operator = '!';
-    return condition_node;
+
+expression_node_t * not_expression_node(expression_node_t * right){
+    compound_expression_node_t * expression_node = calloc(1, sizeof(expression_node_t));
+    expression_node->type = EXPRESSION_N;
+    expression_node->right = right;
+    expression_node->operator = '!';
+    return expression_node;
 
 }
 
 expression_node_t* new_compose_expr_node(expression_node_t * left,char operator,expression_node_t * right){
     if(left->expression_type != right->expression_type){
         fprintf(stderr, "Incompatibilidad de tipos en la expresión.\n");
-        return NULL;
+        exit(1);
     }
     if(left->expression_type > tDOUBLE){
         fprintf(stderr, "Operación \'%c\' no permitida para el tipo solicitado.\n", operator);
-        return NULL;
+        exit(1);
 
     }
     compound_expression_node_t * expression_node = calloc(1, sizeof(compound_expression_node_t));
@@ -217,12 +208,11 @@ func_call_node_t * new_function_call_node(char * name, list_node_t * params){
     while(aux != NULL){
         if(aux_type == NULL){
             fprintf(stderr, "Incompatibilidad en la cantidad de parámetros de la llamada a la función '%s' y su declaración.\n",name);
-            free(func_call_node);
-            return NULL;
+            exit(1);
         }
         if(params->node->type != aux_type->type){
             fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\' y su declaración.\n",name);
-            return NULL;
+            exit(1);
         }else{
             aux=aux->next;
             aux_type = aux_type->next;
@@ -230,7 +220,7 @@ func_call_node_t * new_function_call_node(char * name, list_node_t * params){
     }
     if( aux_type == NULL && aux!=NULL){
         fprintf(stderr, "Incompatibilidad de tipos en los parámetros de la llamada a la función \'%s\' y su declaración.\n",name);
-        return NULL;
+        exit(1);
         //ERROR: PARAMETROS DE MAS EN LA LLAMADA A LA FUNCION
     }
     func_call_node->name=name;

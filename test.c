@@ -6,20 +6,17 @@
 #include<strings.h>
 
 int num;
-double sueldo;
 double multiplicar(){
-int agustin;
-agustin = 5;
+double result;
+result = 5.300000;
 return ;
-}
-double sumar(){
-int cami;
-cami = 5;
 }
 int main(){
 num = 4+9-8;
-sueldo = 2.300000;
 multiplicar();
+if( num >3){
+num = 1;
+}
 return 0;
 }
 

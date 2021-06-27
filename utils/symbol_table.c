@@ -93,7 +93,7 @@ variable *lookup_in_scope(char *name, int scope) {
     unsigned int index = pre % (num_blocks * BLOCK_SIZE);
     node_t *node = hash_table[index];
     while (node != NULL && node->prehash != pre) node = node->next;
-    if (node != NULL && node->scope <= scope)
+    if (node != NULL && node->scope == scope)
         return node->var;
     else
         return NULL;
@@ -113,7 +113,7 @@ void prev_scope() {
             while (node != NULL && node->scope == current_scope) {
                 prev = node;
                 node = node->next;
-                free(prev);  //TODO: REVISAR
+                free(prev); 
             }
             hash_table[i] = node;
         }

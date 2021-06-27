@@ -13,13 +13,12 @@ typedef enum node_type{
     ASSIGN_N,
     VARIABLE_REF_N,
     EXPRESSION_N,
-    CONDITION_N,
     RETURN_N,
 }node_type;
 
 typedef struct if_node_t{
     node_type type;
-    struct ast_node_t * condition;
+    struct expression_node_t * condition;
     struct list_node_t * then;
 }if_node_t;
 #define PADDING_SIZE sizeof(if_node_t)
@@ -70,14 +69,6 @@ typedef struct function_node_t{
     list_node_t * code;
 } function_node_t;
 
-
-typedef struct condition_node_t{
-    node_type type;
-    struct condition_node_t * left;
-    struct condition_node_t * right;
-    char operator;
-}condition_node_t;
-
 typedef struct compound_expression_node_t{
     node_type type;
     var_type expression_type;
@@ -120,12 +111,11 @@ list_node_t * concat_node(list_node_t * list, ast_node_t * code );
 root_node_t * new_root_node();
 declaration_node_t * new_declaration_node(char * name,var_type type);
 assign_node_t* new_assign_node(char * name, expression_node_t * expression);
-condition_node_t* new_compose_cond_node(condition_node_t * left, char operator,condition_node_t * right);
-condition_node_t * not_cond(condition_node_t * right);
+expression_node_t * not_expression_node(expression_node_t * right);
 expression_node_t* new_compose_expr_node(expression_node_t * left,char operator,expression_node_t * right);
 
-if_node_t* new_if_node(condition_node_t * condition,list_node_t*  code);
-while_node_t* new_loop_node(condition_node_t * condition,list_node_t*  code);
+if_node_t* new_if_node(expression_node_t * condition,list_node_t*  code);
+while_node_t* new_loop_node(expression_node_t * condition,list_node_t*  code);
 
 variable_node_t* new_var_node(char * variable);
 const_node_t* new_const_node(variable_value value);

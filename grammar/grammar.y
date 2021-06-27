@@ -101,25 +101,26 @@ DECL     : LET ID ':' T ';' {$$ = new_declaration_node($2, $4);}
          ;
 
 
-LOOP    : WHILE '(' COND ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$ = new_loop_node($3,$7);}
+LOOP    : WHILE '(' EXPRESSION ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$ = new_loop_node($3,$7);}
           ;
-CTL     : IF '(' COND ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$= new_if_node($3, $7);}
+CTL     : IF '(' EXPRESSION ')' {next_scope();} '{' CODE '}' {prev_scope();} {$$= new_if_node($3, $7);}
         ;
 
 
-COND      : COND OR COND {$$ = new_compose_cond_node($1,$2,$3); }
+/* COND      : COND OR COND {$$ = new_compose_cond_node($1,$2,$3); }
           | COND AND COND {$$ = new_compose_cond_node($1,$2,$3); }
           | NOT COND {$$ = not_cond($2); }
           | EXPRESSION CONDITIONAL_OPERATOR EXPRESSION { $$ = $1 ;}
           | TRUE {$$ = new_true_node();}
           | FALSE {$$ = new_false_node();}
-          ;
+          ; */
 
 ASSIGN  : ID '=' EXPRESSION ';' {$$= new_assign_node($1, $3);}
 
    
 EXPRESSION :            
            EXPRESSION OPERATOR EXPRESSION {$$ = new_compose_expr_node($1,$2,$3);}
+          | NOT EXPRESSION {$$ = not_expression_node($2);}
           | ID  {$$ = new_var_node($1);}
           | VALUE {  $$ = $1; }
           | CALL {  $$ = $1 ;}
@@ -135,14 +136,14 @@ OPERATOR  : '+' {$$ = ADD;}
           | '-' {$$ = SUB;}
           | '*' {$$ = MUL;}
           | '/' {$$ = DIV;}
-          ;
-
-CONDITIONAL_OPERATOR :  '<' {$$ = LESS;}
+          | '<' {$$ = LESS;}
           | '>' {$$ = GREATER;}
-          | LE {$$ = LESSEQ;}
-          | GE {$$ = GREATEQ;}
-          | EQ {$$ = EQUALS;}
-          | NE {$$ = NEQ;}
+          | LE  {$$ = LESSEQ;}
+          | GE  {$$ = GREATEQ;}
+          | EQ  {$$ = EQUALS;}
+          | NE  {$$ = NEQ;}
+          | AND {$$ = oAND;}
+          | OR {$$ = oOR;}
           ;
         
 T         : 
