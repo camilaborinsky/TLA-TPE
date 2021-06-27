@@ -32,7 +32,7 @@ void (*generators[])(ast_node_t * node) = {
 };
 
 char * types[] = {"int", "double" ,"bool", "char *" , "rectangle *", "line *", "circle *", "dot *"};
-
+char * ops[] = {"+","-","*","/","<",">","<=",">=","==","!="};
 
 void generate_list(list_node_t * list);
 
@@ -110,7 +110,7 @@ void generate_assign_code(assign_node_t * assign_node){
 
 void generate_expression_code(compound_expression_node_t * expression_node){ 
     generate(expression_node->left);
-    printf("%c", expression_node->operator);
+    printf("%s", ops[expression_node->operator]);
     generate(expression_node->right);
    
 }

@@ -28,8 +28,8 @@
 %token IF WHILE FUNCTION LET LE GE EQ NE NOT START RETURN
 %token<integer> OR AND
 %token<value> vTEXT vINT vDOUBLE TRUE FALSE 
-%type <integer> OPERATOR
-%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM COND CONDITIONAL_OPERATOR EXPRESSION VALUE
+%type <integer> OPERATOR CONDITIONAL_OPERATOR
+%type<node> DECL ASSIGN CTL MAIN_CODE LOOP SMP FUNC PARAM_DECL_LIST PARAM_DECL CODE CALL PARAM_LIST PARAM COND EXPRESSION VALUE
 %type<rnode> S
 %type<type> T
 %parse-param {root_node_t * root}
@@ -127,18 +127,18 @@ VALUE :
         | vDOUBLE {$$= new_double_node($1);}
         ;
 
-OPERATOR  : '+'
-          | '-'
-          | '*'
-          | '/'
+OPERATOR  : '+' {$$ = ADD;}
+          | '-' {$$ = SUB;}
+          | '*' {$$ = MUL;}
+          | '/' {$$ = DIV;}
           ;
 
-CONDITIONAL_OPERATOR :  '<'
-          | '>'
-          | LE
-          | GE
-          | EQ
-          | NE
+CONDITIONAL_OPERATOR :  '<' {$$ = LESS;}
+          | '>' {$$ = GREATER;}
+          | LE {$$ = LESSEQ;}
+          | GE {$$ = GREATEQ;}
+          | EQ {$$ = EQUALS;}
+          | NE {$$ = NEQ;}
           ;
         
 T         : 

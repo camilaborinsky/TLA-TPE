@@ -4,6 +4,7 @@
 
 typedef enum var_type{tINT=0, tDOUBLE, tBOOL, tTEXT, tRECTANGLE, tLINE, tCIRCLE, tDOT}var_type;
 
+typedef enum operators{ADD = 0, SUB, MUL, DIV, LESS, GREATER, LESSEQ, GREATEQ,EQUALS,NEQ} operators;
 
 typedef union{
     int int_val;
