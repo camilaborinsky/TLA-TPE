@@ -1,5 +1,5 @@
-PARSER_SOURCES =utils/ast.c utils/symbol_table.c utils/code_generator.c utils/errors.c
-PARSER_HEADERS = utils/types.h utils/symbol_table.h utils/code_generator.h utils/errors.h
+PARSER_SOURCES := $(shell find utils -name '*.c')
+PARSER_HEADERS := $(shell find utils -name '*.h')
 TO = compile
 FROM=test.td
 

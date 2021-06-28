@@ -5,6 +5,7 @@
         #include "utils/symbol_table.h"
         #include "utils/code_generator.h"
         #include "utils/ast.h"
+        #include "utils/ast_collector.h"
         extern int yylineno;
         int yylex();
         void yyerror(root_node_t * root, const char * msg);
@@ -187,5 +188,8 @@ int main() {
 
     //call code generator
     generate_code(root);
+    
+    //free nodes
+    collect_ast(root);
     exit(0);
 } 
