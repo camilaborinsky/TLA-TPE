@@ -78,7 +78,7 @@ Luego pasamos a la parte de probar nuestro nuevo lenguaje, en busca de errores. 
 ## Descripción de la gramática
 Para la sintaxis de nuestra gramática usamos como inspiración el lenguaje *Typescript* pero estrictamente tipado.
 
-![](https://i.imgur.com/3It6lZv.jpg =700x)
+![](https://i.imgur.com/3It6lZv.jpg)
 
 
 Los tipos que manejamos son:
@@ -187,7 +187,7 @@ cursor --> 0,0
 ## Futuras extensiones
 En general las futuras extensiones que encontramos para nuestro lenguaje se basan en las limitaciones que tiene el mismo. 
 
-![](https://i.imgur.com/WFxA9I3.jpg =700x)
+![](https://i.imgur.com/WFxA9I3.jpg)
 
 :book: Permitir importación de librerías y archivos de nuestro lenguaje. Esto es una propiedad que tienen todos los lenguajes que usamos regularmente y que es muy útil para la reutilización de código. Fortalecería nuestro lenguaje ya que podría tenerse una librería de las figuras más complejas y comportamiento que se usan frecuentemente. Implicaría agregar un módulo nuevo a la gramática con producciones para admitir algo similar a la sentencia *import*. 
 
