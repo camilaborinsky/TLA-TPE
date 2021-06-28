@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 
+//Functions that deal with concluding memory allocation for abstract syntax tree nodes
+
 void collect_ast(root_node_t * root){
     collect_list(root->functions);
     collect_list(root->global_variables);

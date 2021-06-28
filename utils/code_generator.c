@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//utils with functions to deal with code generation for each specific node type
+
 void dummy(ast_node_t *);
 void generate_declaration_code(declaration_node_t * declaration_node);
 void generate_constant(const_node_t * constant);
@@ -17,6 +19,7 @@ void generate_return_code(return_node_t * node);
 void generate_decl_assign_code(decl_assign_node_t * node);
 
 
+//map of handlers to generate code according to the node type. 
 void (*generators[])(ast_node_t * node) = {
     dummy, //root
     generate_declaration_code,
@@ -164,9 +167,6 @@ void generate_constant(const_node_t * constant){
 
 void generate_variable( variable_node_t * node){
     printf(" %s ", node->var->name);
-    //free(node->var->name);
-    //free(node->var);
-    //free(node);
 }
 
 void generate_return_code(return_node_t * node){

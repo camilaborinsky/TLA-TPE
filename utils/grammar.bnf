@@ -1,0 +1,115 @@
+<program>   ::= "I solemnly swear that I am up to no good"  <s>   "mischief managed"
+          | <s>
+
+<s>         ::= <decl> <s>
+          | <func> <s>
+          |  <main_code> <s>
+          | ""
+          
+<main_code> ::= <ctl> <main_code>
+          | <loop>  <main_code>
+          | <smp>  <main_code>
+          | ""
+          
+
+<func>  ::= "function" <id> ":" <func_t> "(" <param_decl_list> ")" "{" <code> <ret> "}"
+
+<func_t> ::= <t>
+       | "void" 
+
+<param_decl_list> ::= <param_decl> 
+                | ""
+                
+
+
+<param_decl> ::= <id> ":" <t> 
+           | <param_decl> "," <param_decl>
+           
+
+<code>      ::= <ctl> <code>  
+          | <loop> <code> 
+          | <smp> <code>  
+          | <decl> <code> 
+          | <decl_assign>";" <code>  
+          | 
+          
+
+<ret>       ::= "return" <expression> ";" 
+          | "return" ";" 
+
+<smp>      ::= <assign> ";"
+         | <call>  ";"
+         
+
+<call>    ::= <id> "(" <param_list> ")"
+            | <id> "->" <param_list>
+        
+
+<param_list> ::= <param> 
+                |  ""
+                
+
+<param> ::= <expression> 
+      |  <expression> "," <param>  
+      | "{" <code> <ret> "}" 
+
+
+<decl>     ::= "let" <id> ":" <t> ";"
+
+
+<loop>    ::= "while" "(" <expression> ")" "{" <code> "}" 
+
+<ctl>     ::= "if" "(" <expression> ")" "{" <code> "}"
+
+<assign>  ::= <id> "=" <expression> 
+
+<decl_assign> ::= "let" <id> ":" <t> "=" <expression> 
+   
+<expression> ::=            
+           <expression> <operator> <expression> 
+          | "not" <expression> 
+          | <id>  
+          | <value> 
+          | <call> 
+          | "(" <expression> ")" 
+          | <id> "join" <id>
+           
+
+<value> ::=
+          <text>
+        | <integer>
+        | <double>
+        | "true" 
+        | "false" 
+        
+
+<operator>  ::= "+" 
+          | "-" 
+          | "*" 
+          | "/" 
+          | "<" 
+          | ">" 
+          | "<="  
+          | ">="  
+          | "=="  
+          | "!="  
+          | "and" 
+          | "or" 
+          
+        
+<t>   ::=   "int" 
+          | "double"
+          | "bool"
+          | "rectangle"
+          | "circle"
+          | "dot"
+          | "text"
+          | "line"
+          | "figure"
+          
+<id> ::= <text> <id> | <id> <integer> | <text>
+<text> ::= <character> <text> | <character>
+<integer> ::= <digit> <integer> | <digit>
+<double> ::= <integer> "." <integer>
+<character> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+<digit>     ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
