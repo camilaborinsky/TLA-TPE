@@ -33,6 +33,9 @@ echo.td : Lee de STDIN y escribe a STDOUT
 types.td : Imprime en pantalla una instancia o ejemplo de todos los tipos que soporta el lenguaje.
 fill.td : si se oprime un nro x entre 0 y 9 se hace un fill de la pantalla de (x*10)%. Es decir si se oprime un 1 se llena un 10% de la pantalla, un 2 un 20%, etc. 
 
+Hicimos también una serie de tests para mostrar manejo de errores de compilación:
+incompatible_types.td, multiple_definition.td, undefined_reference.td, illegal_operation.td, bad_syntax.td
+
 
 ## Idea subyacente y objetivo del lenguaje
 La idea del lenguaje como se mencionó brevemente es proveer un ambiente amigable para el desarrollo de pequeñas animaciones en la terminal mediante código.

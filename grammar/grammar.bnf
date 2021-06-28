@@ -4,12 +4,12 @@
 <s>         ::= <decl> <s>
           | <func> <s>
           |  <main_code> <s>
-          | ""
+          | " "
           
 <main_code> ::= <ctl> <main_code>
           | <loop>  <main_code>
           | <smp>  <main_code>
-          | ""
+          | " "
           
 
 <func>  ::= "function" <id> ":" <func_t> "(" <param_decl_list> ")" "{" <code> <ret> "}"
@@ -18,7 +18,7 @@
        | "void" 
 
 <param_decl_list> ::= <param_decl> 
-                | ""
+                | " "
                 
 
 
@@ -30,8 +30,8 @@
           | <loop> <code> 
           | <smp> <code>  
           | <decl> <code> 
-          | <decl_assign>";" <code>  
-          | 
+          | <decl_assign> ";" <code>  
+          | " "
           
 
 <ret>       ::= "return" <expression> ";" 
@@ -46,7 +46,7 @@
         
 
 <param_list> ::= <param> 
-                |  ""
+                |  " "
                 
 
 <param> ::= <expression> 

@@ -3,7 +3,7 @@ PARSER_HEADERS := $(shell find utils -name '*.h')
 TO = compile
 FROM=test.td
 
-all: demo parser
+all: parser
 
 parser: grammar/grammar.y grammar/definitions.l $(PARSER_SOURCES) $(PARSER_HEADERS)
 	yacc -d grammar/grammar.y -Wno-other -Wno-yacc -Wno-conflicts-sr
