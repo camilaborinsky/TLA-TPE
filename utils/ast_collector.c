@@ -1,6 +1,21 @@
 #include "ast_collector.h"
 #include <stdlib.h>
 
+void (*collectors[])(ast_node_t * node) = {
+    collect_ast, //root
+    collect_declaration_code,
+    collect_constant,
+    collect_if_code,
+    collect_loop_code,
+    collect_function_call,
+    collect_function_declaration,
+    collect_assign_code,
+    collect_variable,
+    collect_expression_code,
+    collect_return_code,
+    collect_decl_assign_code
+
+};
 
 void collect_ast(root_node_t * root){
     collect_list(root->functions);
@@ -20,11 +35,12 @@ void free_function(function * function){
     param_type_node * param = function->first;
     while(param != NULL){
         aux = param;
-        free(aux);
         param = param->next;
+        free(aux);
+        
 
     }   
-    collect_list(function->first);
+    //collect_list(function->first);
     free(function);
 }
 
@@ -62,7 +78,7 @@ void collect_loop_code(while_node_t * node){
 }
 
 void collect_function_call(func_call_node_t * node){
-    free(node->name);
+    //free(node->name);
     collect_list(node->params);
     free(node);
 }
@@ -86,14 +102,21 @@ void collect_variable(variable_node_t * node){
 
 
 void collect_expression_code(compound_expression_node_t * node){
-    collectors[node->left->type](node->left);
+    if(node->left != NULL)collectors[node->left->type](node->left);
     collectors[node->right->type](node->right);
     free(node);
 }
 
 void collect_return_code(return_node_t * node){
-    collectors[node->expression->type](node->expression);
+    if(node->expression != NULL)collectors[node->expression->type](node->expression);
     free(node);
 
 }
+
+void collect_decl_assign_code(decl_assign_node_t * node){
+    collectors[node->expression->type](node->expression);
+    free_variable(node->var);
+    free(node);
+}
+
 
